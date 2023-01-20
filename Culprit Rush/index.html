@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Culprit Rush</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="styles.css">
+
+    <script type="module" src="Scripts/gameManager.js"></script>
+
+</head>
+
+<body>
+    <div class="outerGrid">
+        <div class="mainInfoContainer">
+            <div class="mainbox">
+                <p id="text">
+                    <button id="startbutton">Start Game</button>
+                </p>
+            </div>
+        </div>
+
+        <div class="mapControl">
+            <div class="mapContainer">
+                <button id="mapLeft">go left</button>
+                <button id="mapRight"> go right</button>
+                <button id="mapTop">go forward</button>
+                <button id="mapBottom"> go back</button>
+                <h1 id="currentLocation"></h1>
+            </div>
+        </div>
+        <main></main>
+
+</body>
+
+</html>
