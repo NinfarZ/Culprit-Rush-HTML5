@@ -1,0 +1,1 @@
+export let weapons = ["Knife", "Gun", "Poison"]
