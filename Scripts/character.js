@@ -25,7 +25,7 @@ export default class Character {
         const adjecentRooms = this.location.adjecentRooms();
         let possibleRooms = [];
         for (const location of Object.values(adjecentRooms)) {
-            if (location === locations.BathroomF || location === locations.BathroomF) {
+            if (location === locations.BathroomF || location === locations.BathroomM) {
                 if (location.name.includes(this.gender)) possibleRooms.push(location);
             } else {
                 if (location && location.isOpen) possibleRooms.push(location);

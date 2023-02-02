@@ -1,91 +1,110 @@
-import { player } from "./gameManager.js";
+import { GameManager, player } from "./gameManager.js";
 import { characterList } from "./gameManager.js";
-import { continueButton } from "./gameManager.js";
-import { map } from "./map.js";
+import { dayManager } from "./dayManager.js";
+import { disableContinueButton, hideContinueButton } from "./inputProcessor.js";
 
 
+//object for the text data to be displayed on the main text display
 export let uiData = {
-    intro: {
+    currentIndex: "0_0",
+    currentUiState: "intro",
+
+    "intro": {
         "0_0": {
             text: function () {
-                currentIndex = "0_0";
-                return `You are ${player.charName}.`
+                return `Welcome.`
             },
 
-            next: "0_1"
+            next: function () {
+                uiData.currentIndex = "0_1"
+                uiData.currentUiState = "intro"
+            }
         },
 
         "0_1": {
             text: function () {
-                currentIndex = "0_1";
                 return `And you're trapped inside a mysterious building with 10 other people.`
             },
-            next: "0_2"
+            next: function () {
+                uiData.currentIndex = "0_2"
+            }
 
         },
         "0_2": {
             text: function () {
-                currentIndex = "0_2";
+
                 return listCharacters(characterList) + ".";
             },
-            next: "0_3"
+            next: function () {
+                uiData.currentIndex = "0_3"
+            }
         },
         "0_3": {
             text: function () {
-                currentIndex = "0_3";
+
                 return `One of them is behind this.
                 And they will attack at a moment's notice.`
             },
-            next: "0_4"
+            next: function () {
+                uiData.currentIndex = "0_4"
+            }
         },
         "0_4": {
             text: function () {
-                currentIndex = "0_4";
+
                 return `You must uncover the culprit and escape.`
             },
-            next: "1_0"
-        }
-    },
-    tutorial: {
-        "1_0": {
-            text: function () {
-                currentIndex = "1_0";
-                continueButton.classList.add("disabled");
-                map.setIsActive(true);
-                map.displayPlayerLocation();
-                map.enableValidButtons();
-                return `You can use the map interface below to move around.`
-            },
-            next: "1_1"
-        },
-        "1_1": {
+            next: function () {
+                uiData.currentIndex = "1_0"
+                uiData.currentUiState = "tutorial";
+            }
 
         }
     },
-    locationInfo: {
+    "tutorial": {
+        "1_0": {
+            text: function () {
+                GameManager.tutorialPhase();
+                hideContinueButton(true);
+                return `You can use the map interface below to move around.`
+            },
+        }
+    },
+    "locationInfo": {
         "2_0": {
             text: function (location, whosInside) {
-                currentIndex = "2_0";
-                continueButton.classList.remove("disabled");
                 return `You walk into the ${location.name}. 
                 Inside with you ${whosInside.length > 1 ? "are" : "is"} ${listCharacters(whosInside)}.`
-            },
-            next: "2_1"
-        },
-        "2_1": {
-            text: function () {
-                return `What do you want to do?`;
             }
         }
     }
 }
 
+const mainBox = document.querySelector(".mainbox");
+const mainText = document.querySelector(".text");
 
-export let currentIndex = "0_0";
+function setNextTextIndex() {
+    const currentText = uiData[uiData.currentUiState][uiData.currentIndex]
+    Object.keys(currentText).includes("next") ? currentText.next() : null;
+}
 
-export function typeOut(text, displayArea) {
+function getTextToDisplay() {
+    return uiData[uiData.currentUiState][uiData.currentIndex].text();
+}
+
+export function displayStoryMessage() {
+    typeOut();
+    setNextTextIndex();
+}
+
+
+
+
+
+
+export function typeOut(text = getTextToDisplay(), displayArea = mainText) {
     let i = 0;
-    setButtonsDisabled(true);
+    disableContinueButton(true);
 
     displayArea.innerHTML = "";
     let interval = setInterval(() => {
@@ -93,11 +112,13 @@ export function typeOut(text, displayArea) {
             displayArea.innerHTML += text[i];
             i++;
         } else {
-            setButtonsDisabled(false);
+
+            disableContinueButton(false);
             clearInterval(interval);
         }
-    }, 50);
+    }, 30);
 }
+
 
 function listCharacters(characterList) {
     let namesString = " ";
@@ -116,10 +137,4 @@ function listCharacters(characterList) {
     return namesString;
 }
 
-function setButtonsDisabled(state) {
-    const buttons = document.querySelectorAll("button");
-    for (const button of buttons) {
-        button.disabled = state;
-    }
-}
 

@@ -1,7 +1,39 @@
+/* makes sizing simpler */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* remove default spacing */
+/* force styling of type through styling, rather than elements */
+
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    font: inherit;
+}
+
+/* dark mode user-agent-styles */
+
+html {
+    color-scheme: dark light;
+}
+
+/* min body height */
+
+body {
+    min-height: 100vh;
+}
+
+/* responsive images/videos */
+img,
+picture,
+svg,
+video {
+    display: block;
+    max-width: 100%;
 }
 
 :root {
@@ -13,7 +45,6 @@
     --map-highlight: 0 0 30px 1px #ff3562;
 }
 
-html {}
 
 body {
 
@@ -79,12 +110,20 @@ body {
     position: relative;
 }
 
+.main-box__input {
+    display: none;
+}
+
+.main-box__input--display {
+    display: block;
+}
+
 button {
     font-family: 'Press Start 2P', cursive;
 }
 
 
-#continueButton {
+.continue-button {
     position: absolute;
     transform: rotate(-5deg);
     top: 60%;
@@ -99,13 +138,13 @@ button {
     box-shadow: 0px 0px 10px 5px #808130;
 }
 
-#continueButton:hover {
+.continue-button:hover {
     background: #eef087;
     font-size: 2.5rem;
     box-shadow: -10px 0px 10px 5px #808130;
 }
 
-#continueButton:disabled {
+.continue-button:disabled {
     background: #808130;
 }
 
@@ -122,7 +161,7 @@ button {
     background: none;
 }
 
-#mapLeft {
+#left {
     border-right: none;
     border-left: 0.5rem dashed var(--button-border-color);
     border-radius: 20%;
@@ -136,7 +175,7 @@ button {
 }
 
 
-#mapRight {
+#right {
     border-left: none;
     border-right: 0.5rem dashed var(--button-border-color);
     border-radius: 20%;
@@ -149,7 +188,7 @@ button {
     transition: 100ms ease-in-out
 }
 
-#mapTop {
+#forward {
     border-bottom: none;
     border-top: 0.5rem dashed var(--button-border-color);
     border-radius: 20%;
@@ -161,11 +200,11 @@ button {
     transition: 100ms ease-in-out;
 }
 
-#mapTop span {
+.mapTop span {
     transform: rotate(90deg);
 }
 
-#mapBottom {
+#back {
     border-top: none;
     border-bottom: 0.5rem dashed var(--button-border-color);
     border-radius: 20%;
@@ -177,24 +216,24 @@ button {
     transition: 100ms ease-in-out;
 }
 
-#mapBottom span {
+.mapBottom span {
     transform: rotate(-90deg);
 }
 
-#mapLeft:hover {
+.mapLeft:hover {
     transform: translateX(calc(var(--button-animation) * -1));
 
 }
 
-#mapRight:hover {
+.mapRight:hover {
     transform: translateX(var(--button-animation));
 }
 
-#mapTop:hover {
+.mapTop:hover {
     transform: translateY(calc(var(--button-animation) * -1));
 }
 
-#mapBottom:hover {
+.mapBottom:hover {
     transform: translateY(var(--button-animation));
 }
 

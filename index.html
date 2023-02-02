@@ -11,34 +11,44 @@
     <link rel="stylesheet" href="styles.css">
 
     <script type="module" src="Scripts/gameManager.js"></script>
+    <script type="module" src="Scripts/inputManager.js"></script>
+    <script type="module" src="Scripts/character.js"></script>
+    <script type="module" src="Scripts/player.js"></script>
+    <script type="module" src="Scripts/killer.js"></script>
+    <script type="module" src="Scripts/map.js"></script>
+    <script type="module" src="Scripts/uiData.js"></script>
+    <script type="module" src="Scripts/weapons.js"></script>
+    <script type="module" src="Scripts/location.js"></script>
+    <script type="module" src="Scripts/dayManager.js"></script>
+
 
 </head>
 
 <body>
     <div class="outerGrid">
         <div class="decorationContainer1"></div>
-        <div class="mainInfoContainer">
+        <main class="mainInfoContainer">
             <div class="mainbox mainBoxBorder">
-                <p id="text">
-                    <button id="startbutton">Start Game</button>
+                <button class="continue-button">&raquo;</button>
+                <p class="text">
+                    <button class="start-button">Start Game</button>
                 </p>
             </div>
-        </div>
+        </main>
 
-        <div class="mapControl">
-            <div class="peopleInside">
+        <section class="mapControl">
+            <div class="people-inside">
 
             </div>
             <div class="mapContainer">
-                <button id="mapLeft"><span class="icon">&#10094;</span></button>
-                <button id="mapRight"><span class="icon">&#10094;</span></button>
-                <button id="mapTop"><span class="icon">&#10094;</span></button>
-                <button id="mapBottom"><span class="icon">&#10094;</span></button>
+                <button id="left" class="mapLeft"><span class="icon">&#10094;</span></button>
+                <button id="right" class="mapRight"><span class="icon">&#10094;</span></button>
+                <button id="forward" class="mapTop"><span class="icon">&#10094;</span></button>
+                <button id="back" class="mapBottom"><span class="icon">&#10094;</span></button>
                 <h1 id="currentLocation"></h1>
             </div>
-            <div class="itemsInside"></div>
-        </div>
-        <main></main>
+            <div class="items-inside"></div>
+        </section>
     </div>
 
 </body>
