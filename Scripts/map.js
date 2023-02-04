@@ -33,10 +33,8 @@ export let map = {
         playerLocationDisplay.innerHTML = player.location.name;
     },
     updateMapLocation: function (direction) {
-        if (!this.isActive) {
-            console.log("map is disabled!");
-            return;
-        }
+        if (!this.isActive) return;
+
         let whereTo = this.isDirectionValid(direction);
         playerLocationDisplay.innerHTML = whereTo.name;
         player.updateLocation(whereTo, player.location);
@@ -47,7 +45,7 @@ export let map = {
 
     },
     isDirectionValid(direction) {
-        const roomsToGo = player.location.adjecentRooms();
+        const roomsToGo = player.location.adjecentRooms;
         console.log(roomsToGo[direction])
         if (!roomsToGo[direction]) {
             return false;
@@ -55,7 +53,7 @@ export let map = {
         return roomsToGo[direction];
     },
     enableValidButtons() {
-        const roomsToGo = player.location.adjecentRooms();
+        const roomsToGo = player.location.adjecentRooms;
         let locationIndex = 0;
         let button;
         for (const location of Object.values(roomsToGo)) {

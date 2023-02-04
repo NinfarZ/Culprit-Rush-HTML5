@@ -12,8 +12,14 @@ export let dayManager = {
             this.currentHour += 1
         }
         if (this.currentHour === 12 && this.currentMinutes === 0) {
-            this.timePeriod === "am" ? this.timePeriod = "pm" : this.timePeriod = "am"
+            if (this.timePeriod === "am") {
+                this.timePeriod = "pm"
+            } else {
+                this.currentDay += 1;
+                this.timePeriod = "am"
+            }
         }
+
         if (this.currentHour > 12) this.currentHour = 1
     },
     getTime: function () {
@@ -22,6 +28,10 @@ export let dayManager = {
     canDisplayTime() {
         if (["10:00 am", "12:00 pm", "10:00 pm"].includes(this.getTime())) return true;
         return false;
+    },
+    skipToMorning() {
+        this.currentHour = 10
+        this.currentMinutes = 0
     },
     "10:00 am": {
         text: function () {
@@ -37,5 +47,11 @@ export let dayManager = {
         text: function () {
             return `[Night: Day ${dayManager.currentDay}: ${dayManager.getTime()}]`
         }
+    },
+    "12:00 am": {
+        text: function () {
+            return `It's ${dayManager.getTime()}. You went back to your room and slept for the night.`
+        }
     }
+
 }

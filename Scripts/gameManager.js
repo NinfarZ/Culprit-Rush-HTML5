@@ -22,7 +22,9 @@ const makoto = new Character("Makoto", true, "M", locations.Cafeteria, [], []);
 export let characterList = [john, jeff, maria, sarah, james, steve, linda, laela, amy, makoto];
 
 let chooseKiller = characterList.splice(Math.floor(Math.random() * characterList.length), 1);
-let killer = new Killer(chooseKiller[0], true, chooseKiller[0].gender, chooseKiller[0].location, [], [], null);
+const killerValues = Object.values(chooseKiller[0]);
+let killer = new Killer(killerValues[0], killerValues[1], killerValues[2], killerValues[3], killerValues[4], killerValues[5]);
+characterList.push(killer);
 
 export let GameManager = {
     setGameStart: function () {
@@ -43,6 +45,7 @@ export let GameManager = {
     },
     turn: function () {
         dayManager.passTheTime();
+        if (dayManager.getTime() === "12:00 am") dayManager.skipToMorning();
 
         let whosInsideRoom = [...player.location.whosInside];
         whosInsideRoom.splice(whosInsideRoom.indexOf(player), 1);

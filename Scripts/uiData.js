@@ -80,6 +80,7 @@ export let uiData = {
     }
 }
 
+
 const mainBox = document.querySelector(".mainbox");
 const mainText = document.querySelector(".text");
 

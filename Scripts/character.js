@@ -22,7 +22,9 @@ export default class Character {
     }
 
     getPossibleDirections() {
-        const adjecentRooms = this.location.adjecentRooms();
+        const adjecentRooms = this.location.adjecentRooms;
+
+
         let possibleRooms = [];
         for (const location of Object.values(adjecentRooms)) {
             if (location === locations.BathroomF || location === locations.BathroomM) {
@@ -31,13 +33,17 @@ export default class Character {
                 if (location && location.isOpen) possibleRooms.push(location);
             }
         }
+
         return possibleRooms;
     }
 
     investigate() {
         const investigationChance = 30;
         if (Math.floor(Math.random() * 100) <= investigationChance) {
-            this.investigationReport
+            if (this.location.itemsInside) {
+                const roomDetails = { [this.location.name]: this.location.itemsInside };
+                !this.investigationReport.includes(roomDetails) && this.investigationReport.push(roomDetails);
+            }
         }
     }
 
@@ -46,6 +52,7 @@ export default class Character {
         const pickRoom = possibleRooms[Math.floor(Math.random() * possibleRooms.length)]
 
         this.updateLocation(pickRoom, this.location);
+        this.investigate();
         console.log(`${this.charName} is in the ${pickRoom.name}`);
 
     }
