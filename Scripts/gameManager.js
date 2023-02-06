@@ -10,27 +10,26 @@ import * as uiModel from "./uiOrganizer.js";
 
 
 
-export const player = new Player("You", true, "M", locations.MyBedroom, [], []);
-const john = new Character("John", true, "M", locations.Cafeteria, [], []);
-const jeff = new Character("Jeff", true, "M", locations.Cafeteria, [], []);
-const maria = new Character("Maria", true, "F", locations.Cafeteria, [], []);
-const sarah = new Character("Sarah", true, "F", locations.Cafeteria, [], []);
-const james = new Character("James", true, "M", locations.Cafeteria, [], []);
-const steve = new Character("Steve", true, "M", locations.Cafeteria, [], []);
-const linda = new Character("Linda", true, "F", locations.Cafeteria, [], []);
-const laela = new Character("Laela", true, "F", locations.Cafeteria, [], []);
-const amy = new Character("Amy", true, "F", locations.Cafeteria, [], []);
-const makoto = new Character("Makoto", true, "M", locations.Cafeteria, [], []);
+export const player = new Player("You", true, "M", locations.MyBedroom, [], [], 0.5);
+const sarah = new Character("Sarah", true, "F", locations.Cafeteria, [], [], 0.5);
+const james = new Character("James", true, "M", locations.Cafeteria, [], [], 0.3);
+const steve = new Character("Steve", true, "M", locations.Cafeteria, [], [], 0.5);
+const linda = new Character("Linda", true, "F", locations.Cafeteria, [], [], 0.5);
+const laela = new Character("Laela", true, "F", locations.Cafeteria, [], [], 0.7);
+const makoto = new Character("Makoto", true, "M", locations.Cafeteria, [], [], 0.5);
 
 export let characterList = [sarah, james, steve, linda, laela, makoto];
 
 const chooseKiller = characterList.splice(Math.floor(Math.random() * characterList.length), 1);
 const killerValues = Object.values(chooseKiller[0]);
-export const killer = new Killer(killerValues[0], killerValues[1], killerValues[2], killerValues[3], killerValues[4], killerValues[5], null);
+export const killer = new Killer(killerValues[0], killerValues[1], killerValues[2], killerValues[3], killerValues[4], killerValues[5], killerValues[6], null, null);
 characterList.push(killer);
 
 export let GameManager = {
     setGameStart: function () {
+        for (const char of characterList) {
+            char.randomizeLocation();
+        }
         map.setIsActive(false);
         hideWeapons()
         textQueue.pushIntoQueue(uiModel.introText());
@@ -61,19 +60,44 @@ export let GameManager = {
         whosInsideRoom.splice(whosInsideRoom.indexOf(player), 1);
         console.log(whosInsideRoom);
 
-        if (whosInsideRoom.length >= 1) {
-            textQueue.pushIntoQueue(uiModel.findingPeopleExploring());
-            textQueue.pushIntoQueue(uiModel.behaviourInTheRoom());
+        //probability of characters showing behaviour
+        const chanceOfEvent = 38;
+        if (Math.floor(Math.random() * 100) <= chanceOfEvent) {
+            if (whosInsideRoom.length === 1) textQueue.pushIntoQueue(uiModel.behaviourSolo(whosInsideRoom));
+            if (whosInsideRoom.length > 1) textQueue.pushIntoQueue(uiModel.behaviourGroup(whosInsideRoom));
+
+            const averageMood = getAvgMoodInRoom(whosInsideRoom);
+            updateGroupMood(averageMood);
+
         }
 
-        console.log(dayManager.getTime());
+
         if (!textQueue.isQueueEmpty()) textQueue.updateStoryMessage();
+
+
 
 
 
     }
 }
 
+//returns the average of everyone's mood whithin a room
+function getAvgMoodInRoom(whosInsideRoom) {
+    let moodSum = 0;
+    let totalPeople = whosInsideRoom.length;
+    for (const person of whosInsideRoom) {
+        moodSum += person.moodLevel;
+    }
+
+    return moodSum / totalPeople;
+}
+
+function updateGroupMood(averageMood) {
+    for (const char of characterList) {
+        if (averageMood > char.moodLevel) char.moodSwing(averageMood * 0.5);
+        else if (averageMood < char.moodLevel) char.moodSwing(averageMood * -0.5);
+    }
+}
 
 const mainInfoDisplay = document.createElement("DIV");
 

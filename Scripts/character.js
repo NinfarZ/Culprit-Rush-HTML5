@@ -1,13 +1,14 @@
 import { locations } from "./location.js";
 
 export default class Character {
-    constructor(charName, isAlive, gender, location, inventory, investigationReport) {
+    constructor(charName, isAlive, gender, location, inventory, investigationReport, moodLevel) {
         this.charName = charName;
         this.isAlive = isAlive;
         this.gender = gender;
         this.location = location;
         this.inventory = inventory;
         this.investigationReport = investigationReport;
+        this.moodLevel = moodLevel;
     }
 
     updateLocation(newLocation, oldLocation) {
@@ -21,21 +22,12 @@ export default class Character {
 
     }
 
-    getPossibleDirections() {
-        const adjecentRooms = this.location.adjecentRooms;
+    moodSwing(multiplier) {
+        this.moodLevel += multiplier;
+        console.log(this.moodLevel);
 
-
-        let possibleRooms = [];
-        for (const location of Object.values(adjecentRooms)) {
-            if (location === locations.BathroomF || location === locations.BathroomM) {
-                if (location.name.includes(this.gender)) possibleRooms.push(location);
-            } else {
-                if (location && location.isOpen) possibleRooms.push(location);
-            }
-        }
-
-        return possibleRooms;
     }
+
 
     investigate() {
         const investigationChance = 30;
@@ -47,8 +39,28 @@ export default class Character {
         }
     }
 
+    randomizeLocation() {
+        const possibleLocations = this.getPossibleLocations(locations);
+        this.location = possibleLocations[Math.floor(Math.random() * possibleLocations.length)];
+        console.log(this.location);
+    }
+
+    getPossibleLocations(locations) {
+        const possibleLocations = [];
+        const ignoreBathroom = this.gender === "M" ? locations.BathroomF : locations.BathroomM;
+        for (const location of Object.values(locations)) {
+            if (!location) continue;
+            if (location === ignoreBathroom) continue;
+            if (location.isOpen) possibleLocations.push(location);
+        }
+        return possibleLocations;
+    }
+
     turn() {
-        const possibleRooms = this.getPossibleDirections();
+        const chanceOfMoving = 50;
+        if (Math.floor(Math.random() * 100) <= chanceOfMoving) return;
+
+        const possibleRooms = this.getPossibleLocations(this.location.adjecentRooms);
         const pickRoom = possibleRooms[Math.floor(Math.random() * possibleRooms.length)]
 
         this.updateLocation(pickRoom, this.location);
@@ -57,4 +69,6 @@ export default class Character {
 
     }
 }
+
+
 

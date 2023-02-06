@@ -3,9 +3,10 @@ import { removeWeapon } from "./location.js";
 
 
 export default class Killer extends Character {
-    constructor(charName, isAlive, gender, location, inventory, investigationReport, weapon) {
-        super(charName, isAlive, gender, location, inventory, investigationReport);
+    constructor(charName, isAlive, gender, location, inventory, investigationReport, moodLevel, weapon, target) {
+        super(charName, isAlive, gender, location, inventory, investigationReport, moodLevel);
         this.weapon = weapon;
+        this.target = target;
     }
     findWeapon(roomDetails) {
         if (this.weapon) return;
@@ -31,8 +32,12 @@ export default class Killer extends Character {
         }
     }
 
+    lookForTarget() {
+
+    }
+
     turn() {
-        const possibleRooms = this.getPossibleDirections();
+        const possibleRooms = this.getPossibleLocations(this.location.adjecentRooms);
         const pickRoom = possibleRooms[Math.floor(Math.random() * possibleRooms.length)]
 
         this.updateLocation(pickRoom, this.location);
