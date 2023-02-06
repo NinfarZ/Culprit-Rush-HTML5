@@ -67,7 +67,7 @@ export function hideWeapons() {
         randomLocation.itemsInside.push(weapon);
         locationList.splice(locationList.indexOf(randomLocation), 1);
 
-        console.log(`${weapon.weapon} was placed in the ${randomLocation.name}`);
+        console.log(`${weapon.weaponName} was placed in the ${randomLocation.name}`);
 
     }
 }

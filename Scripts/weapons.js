@@ -20,19 +20,12 @@ let weaponClassObj = {
 
 }
 
-
-class WeaponClass {
-    constructor(itemType, weaponClass) {
+class Weapon {
+    constructor(weaponName, isNoisy, itemType, weaponClass) {
+        this.weaponName = weaponName;
+        this.isNoisy = isNoisy;
         this.itemType = itemType;
         this.weaponClass = weaponClass;
-    }
-}
-
-class Weapon extends WeaponClass {
-    constructor(weaponName, isNoisy, itemType, weaponClass) {
-        super(itemType, weaponClass);
-        this.weaponName;
-        this.isNoisy;
     }
 
 }

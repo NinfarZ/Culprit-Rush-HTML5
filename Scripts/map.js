@@ -20,11 +20,13 @@ export let map = {
         setMapActive(isActive);
         switch (isActive) {
             case false:
-                mapScreen.classList.add("disabled-screen");
+
                 mapContainer.classList.add("disable-map-highlight");
                 break;
             case true:
-                mapScreen.classList.remove("disabled-screen");
+                this.enableValidButtons();
+                this.displayPlayerLocation();
+                mapScreen.style.display = "flex";
                 mapContainer.classList.remove("disable-map-highlight");
                 break;
         }

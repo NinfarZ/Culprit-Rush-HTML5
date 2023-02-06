@@ -1,5 +1,5 @@
-import { displayStoryMessage } from "./uiData.js";
-import { mainButton, continueButton, mapInput } from "./inputManager.js";
+import { textQueue } from "./uiData.js";
+import { mainButton, continueButton, mapInput, investigationButton } from "./inputManager.js";
 import { GameManager } from "./gameManager.js";
 import { map } from "./map.js";
 
@@ -7,10 +7,11 @@ mainButton.addEventListener("click", startGame);
 continueButton.addEventListener("click", continueText);
 
 function continueText() {
-    displayStoryMessage();
+    textQueue.updateStoryMessage();
 }
 function startGame() {
     GameManager.setGameStart();
+    mainButton.style.display = "none";
 }
 
 for (const input of mapInput) {
@@ -21,6 +22,10 @@ for (const input of mapInput) {
 
 function handleMapInput(input) {
     map.updateMapLocation(input.id);
+}
+
+export function hideInvestigationButton(setHide) {
+    setHide ? investigationButton.style.display = "none" : investigationButton.style.display = "inline";
 }
 
 export function setMapActive(state) {

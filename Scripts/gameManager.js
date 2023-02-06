@@ -1,11 +1,14 @@
 import Player from "./player.js";
 //import { disableButtonEvent, uiData } from "./uiData.js";
 import { locations, hideWeapons } from "./location.js";
-import { typeOut, uiData } from "./uiData.js";
+import { typeOut, textQueue } from "./uiData.js";
 import { map } from "./map.js";
 import { dayManager } from "./dayManager.js";
 import Character from "./character.js";
 import Killer from "./killer.js";
+import * as uiModel from "./uiOrganizer.js";
+
+
 
 export const player = new Player("You", true, "M", locations.MyBedroom, [], []);
 const john = new Character("John", true, "M", locations.Cafeteria, [], []);
@@ -19,18 +22,21 @@ const laela = new Character("Laela", true, "F", locations.Cafeteria, [], []);
 const amy = new Character("Amy", true, "F", locations.Cafeteria, [], []);
 const makoto = new Character("Makoto", true, "M", locations.Cafeteria, [], []);
 
-export let characterList = [john, jeff, maria, sarah, james, steve, linda, laela, amy, makoto];
+export let characterList = [sarah, james, steve, linda, laela, makoto];
 
-let chooseKiller = characterList.splice(Math.floor(Math.random() * characterList.length), 1);
+const chooseKiller = characterList.splice(Math.floor(Math.random() * characterList.length), 1);
 const killerValues = Object.values(chooseKiller[0]);
-let killer = new Killer(killerValues[0], killerValues[1], killerValues[2], killerValues[3], killerValues[4], killerValues[5]);
+export const killer = new Killer(killerValues[0], killerValues[1], killerValues[2], killerValues[3], killerValues[4], killerValues[5], null);
 characterList.push(killer);
 
 export let GameManager = {
     setGameStart: function () {
         map.setIsActive(false);
         hideWeapons()
-        typeOut(dayManager[dayManager.getTime()].text());
+        textQueue.pushIntoQueue(uiModel.introText());
+        textQueue.pushIntoQueue(uiModel.mapTutorialText());
+
+        if (!textQueue.isQueueEmpty()) textQueue.updateStoryMessage();
 
 
     },
@@ -47,15 +53,23 @@ export let GameManager = {
         dayManager.passTheTime();
         if (dayManager.getTime() === "12:00 am") dayManager.skipToMorning();
 
-        let whosInsideRoom = [...player.location.whosInside];
-        whosInsideRoom.splice(whosInsideRoom.indexOf(player), 1);
-
-        console.log(dayManager.getTime());
-        if (dayManager.canDisplayTime()) typeOut(dayManager[dayManager.getTime()].text());
-
         for (const char of characterList) {
             char.turn()
         }
+
+        let whosInsideRoom = [...player.location.whosInside];
+        whosInsideRoom.splice(whosInsideRoom.indexOf(player), 1);
+        console.log(whosInsideRoom);
+
+        if (whosInsideRoom.length >= 1) {
+            textQueue.pushIntoQueue(uiModel.findingPeopleExploring());
+            textQueue.pushIntoQueue(uiModel.behaviourInTheRoom());
+        }
+
+        console.log(dayManager.getTime());
+        if (!textQueue.isQueueEmpty()) textQueue.updateStoryMessage();
+
+
 
     }
 }

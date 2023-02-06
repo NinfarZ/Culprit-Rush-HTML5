@@ -35,22 +35,22 @@ export let dayManager = {
     },
     "10:00 am": {
         text: function () {
-            return `[Morning] [Day ${dayManager.currentDay}] [${dayManager.getTime()}]`
+            return [`[Morning] [Day ${dayManager.currentDay}] [${dayManager.getTime()}]`];
         }
     },
     "12:00 pm": {
         text: function () {
-            return `[Afternoon: Day ${dayManager.currentDay}: ${dayManager.getTime()}]`
+            return [`[Afternoon: Day ${dayManager.currentDay}: ${dayManager.getTime()}]`];
         }
     },
     "10:00 pm": {
         text: function () {
-            return `[Night: Day ${dayManager.currentDay}: ${dayManager.getTime()}]`
+            return [`[Night: Day ${dayManager.currentDay}: ${dayManager.getTime()}]`];
         }
     },
     "12:00 am": {
         text: function () {
-            return `It's ${dayManager.getTime()}. You went back to your room and slept for the night.`
+            return [`It's ${dayManager.getTime()}. You went back to your room and slept for the night.`];
         }
     }
 

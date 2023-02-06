@@ -2,108 +2,93 @@ import { GameManager, player } from "./gameManager.js";
 import { characterList } from "./gameManager.js";
 import { dayManager } from "./dayManager.js";
 import { disableContinueButton, hideContinueButton } from "./inputProcessor.js";
-
-
-//object for the text data to be displayed on the main text display
-export let uiData = {
-    currentIndex: "0_0",
-    currentUiState: "intro",
-
-    "intro": {
-        "0_0": {
-            text: function () {
-                return `Welcome.`
-            },
-
-            next: function () {
-                uiData.currentIndex = "0_1"
-                uiData.currentUiState = "intro"
-            }
-        },
-
-        "0_1": {
-            text: function () {
-                return `And you're trapped inside a mysterious building with 10 other people.`
-            },
-            next: function () {
-                uiData.currentIndex = "0_2"
-            }
-
-        },
-        "0_2": {
-            text: function () {
-
-                return listCharacters(characterList) + ".";
-            },
-            next: function () {
-                uiData.currentIndex = "0_3"
-            }
-        },
-        "0_3": {
-            text: function () {
-
-                return `One of them is behind this.
-                And they will attack at a moment's notice.`
-            },
-            next: function () {
-                uiData.currentIndex = "0_4"
-            }
-        },
-        "0_4": {
-            text: function () {
-
-                return `You must uncover the culprit and escape.`
-            },
-            next: function () {
-                uiData.currentIndex = "1_0"
-                uiData.currentUiState = "tutorial";
-            }
-
-        }
-    },
-    "tutorial": {
-        "1_0": {
-            text: function () {
-                GameManager.tutorialPhase();
-                hideContinueButton(true);
-                return `You can use the map interface below to move around.`
-            },
-        }
-    },
-    "locationInfo": {
-        "2_0": {
-            text: function (location, whosInside) {
-                return `You walk into the ${location.name}. 
-                Inside with you ${whosInside.length > 1 ? "are" : "is"} ${listCharacters(whosInside)}.`
-            }
-        }
-    }
-}
+import { map } from "./map.js";
 
 
 const mainBox = document.querySelector(".mainbox");
 const mainText = document.querySelector(".text");
 
-function setNextTextIndex() {
-    const currentText = uiData[uiData.currentUiState][uiData.currentIndex]
-    Object.keys(currentText).includes("next") ? currentText.next() : null;
+
+class UiArray {
+    constructor(textArray) {
+        this.textArray = textArray;
+
+    }
+
+    displayText() {
+        if (this.isArrayEmpty()) return;
+        console.log(this.textArray);
+        typeOut(this.textArray.shift())
+
+    }
+
+    isArrayEmpty() {
+        return !this.textArray.length ? true : false;
+    }
 }
 
-function getTextToDisplay() {
-    return uiData[uiData.currentUiState][uiData.currentIndex].text();
+// const introText = new UiArray(["Welcome.", "You're trapped inside a mysterious building with 10 other people.",
+//     `One of them is dangerous. And will attack at a moment's notice.`,
+//     `You must uncover the culprit to escape.`]);
+// const mapTutorialText = new UiArray([`Use the map interface below to move around.`,
+//     `Keep in mind that every move you make spends a turn.`,
+//     `On each turn, time will pass, and everyone will perform an action.`,
+//     `So watch out.`,
+//     `The culprit is on the move...`]);
+// const findingPeopleExploring = new UiArray([`In the ${player.location} you see ${listCharacters(player.location.whosInside)}`]);
+
+
+
+// export let textQueue = [introText];
+// let queueIndex = 0;
+
+class TextQueue {
+    constructor(queue) {
+        this.queue = queue;
+    }
+
+    pushIntoQueue(text) {
+        this.queue.push(convertToUiArray(text));
+        console.log(this.queue);
+    }
+
+
+    isQueueEmpty() {
+        return !this.queue.length ? true : false;
+    }
+
+    removeUiArrayFromQueue() {
+        this.queue.shift();
+    }
+
+    updateStoryMessage() {
+        if (this.queue[0].isArrayEmpty()) {
+            this.removeUiArrayFromQueue();
+        }
+        if (!this.isQueueEmpty()) {
+            hideContinueButton(false);
+            map.setIsActive(false);
+        } else {
+            hideContinueButton(true);
+            map.setIsActive(true);
+            return;
+        }
+
+        this.queue[0].displayText();
+
+    }
 }
 
-export function displayStoryMessage() {
-    typeOut();
-    setNextTextIndex();
+function convertToUiArray(text) {
+    const newText = new UiArray(text);
+    return newText;
 }
 
+export const textQueue = new TextQueue([]);
 
 
 
-
-
-export function typeOut(text = getTextToDisplay(), displayArea = mainText) {
+export function typeOut(text, displayArea = mainText) {
     let i = 0;
     disableContinueButton(true);
 
@@ -121,21 +106,6 @@ export function typeOut(text = getTextToDisplay(), displayArea = mainText) {
 }
 
 
-function listCharacters(characterList) {
-    let namesString = " ";
-    if (characterList.length === 1) {
-        namesString = characterList[0].charName;
-        return namesString;
-    }
-    for (let i = 0; i < characterList.length; i++) {
-        if (i === characterList.length - 1) {
-            namesString = namesString + " and " + characterList[i].charName;
-        } else {
-            namesString += characterList[i].charName + ", ";
-        }
 
-    }
-    return namesString;
-}
 
 
