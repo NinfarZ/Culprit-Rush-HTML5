@@ -1,10 +1,11 @@
 import { textQueue } from "./uiData.js";
 import { mainButton, continueButton, mapInput, investigationButton } from "./inputManager.js";
-import { GameManager } from "./gameManager.js";
+import { GameManager, player } from "./gameManager.js";
 import { map } from "./map.js";
 
 mainButton.addEventListener("click", startGame);
 continueButton.addEventListener("click", continueText);
+investigationButton.addEventListener("click", handleInvestigate);
 
 function continueText() {
     textQueue.updateStoryMessage();
@@ -18,6 +19,10 @@ for (const input of mapInput) {
     input.addEventListener("click", function () {
         handleMapInput(input);
     })
+}
+
+function handleInvestigate() {
+    player.investigate();
 }
 
 function handleMapInput(input) {

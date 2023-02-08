@@ -1,7 +1,7 @@
 import { GameManager, player } from "./gameManager.js";
 import { characterList } from "./gameManager.js";
 import { dayManager } from "./dayManager.js";
-import { disableContinueButton, hideContinueButton } from "./inputProcessor.js";
+import { disableContinueButton, hideContinueButton, hideInvestigationButton } from "./inputProcessor.js";
 import { map } from "./map.js";
 
 
@@ -67,9 +67,12 @@ class TextQueue {
         }
         if (!this.isQueueEmpty()) {
             hideContinueButton(false);
+            hideInvestigationButton(true);
             map.setIsActive(false);
         } else {
             hideContinueButton(true);
+            hideInvestigationButton(false);
+
             map.setIsActive(true);
             return;
         }
@@ -85,6 +88,10 @@ function convertToUiArray(text) {
 }
 
 export const textQueue = new TextQueue([]);
+
+export function displayNothing() {
+    mainText.innerHTML = ". . .";
+}
 
 
 

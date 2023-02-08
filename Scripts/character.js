@@ -1,4 +1,5 @@
 import { locations } from "./location.js";
+import { dayManager } from "./dayManager.js";
 
 export default class Character {
     constructor(charName, isAlive, gender, location, inventory, investigationReport, moodLevel) {
@@ -22,8 +23,14 @@ export default class Character {
 
     }
 
+    startMood() {
+        //random mood level between 0.3 and 0.7
+        this.moodLevel = Math.fround(Math.random() * (0.7 - 0.5) + 0.5);
+    }
+
     moodSwing(multiplier) {
-        this.moodLevel += multiplier;
+        this.moodLevel += Math.fround(multiplier);
+        this.moodLevel = Math.min(1, Math.max(0, this.moodLevel));
         console.log(this.moodLevel);
 
     }
@@ -47,16 +54,18 @@ export default class Character {
 
     getPossibleLocations(locations) {
         const possibleLocations = [];
-        const ignoreBathroom = this.gender === "M" ? locations.BathroomF : locations.BathroomM;
+        const ignoreBathroom = this.gender === "M" ? "Bathroom F" : "Bathroom M";
         for (const location of Object.values(locations)) {
             if (!location) continue;
-            if (location === ignoreBathroom) continue;
+            if (location.name === ignoreBathroom) continue;
             if (location.isOpen) possibleLocations.push(location);
         }
         return possibleLocations;
     }
 
     turn() {
+        if (!this.isAlive) return;
+
         const chanceOfMoving = 50;
         if (Math.floor(Math.random() * 100) <= chanceOfMoving) return;
 

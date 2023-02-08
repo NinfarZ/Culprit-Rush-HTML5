@@ -1,11 +1,13 @@
 import { locations } from "./location.js"
 import { player } from "./gameManager.js";
-import { GameManager } from "./gameManager.js";
+import { GameManager, advanceTime } from "./gameManager.js";
 import { setMapActive } from "./inputProcessor.js";
 import { disableMapButton } from "./inputProcessor.js";
 
 
 let playerLocationDisplay = document.querySelector("#currentLocation");
+const whosThere = document.querySelector(".people-inside-names");
+const itemsInside = document.querySelector(".items-inside-names");
 const mapScreen = document.querySelector("#currentLocation");
 const mapContainer = document.querySelector(".mapContainer");
 const mapArrowUi = "&#10094";
@@ -34,6 +36,28 @@ export let map = {
     displayPlayerLocation: function () {
         playerLocationDisplay.innerHTML = player.location.name;
     },
+
+    displayWhosThere: function () {
+        for (const char of player.location.whosInside) {
+            if (char !== player) {
+                const li = document.createElement("LI");
+                char.isAlive ? li.style.color = "white" : li.style.color = "red";
+                li.innerHTML = char.charName;
+                whosThere.append(li);
+            }
+
+        }
+    },
+    displayItems: function () {
+        itemsInside.innerHTML = "";
+        if (!player.investigationReport.hasOwnProperty(`${player.location.name}`)) return;
+
+        for (const item of player.location.itemsInside) {
+            const li = document.createElement("LI");
+            li.innerHTML = item.weaponName;
+            itemsInside.append(li);
+        }
+    },
     updateMapLocation: function (direction) {
         if (!this.isActive) return;
 
@@ -41,8 +65,11 @@ export let map = {
         playerLocationDisplay.innerHTML = whereTo.name;
         player.updateLocation(whereTo, player.location);
         this.enableValidButtons();
+        this.displayItems();
+        advanceTime();
 
-        GameManager.turn();
+        whosThere.innerHTML = "";
+        GameManager[GameManager.gameState]();
 
 
     },

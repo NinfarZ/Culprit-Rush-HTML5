@@ -72,6 +72,7 @@ export function hideWeapons() {
     }
 }
 
+
 export function removeWeapon(location, weapon) {
     location.itemsInside.splice(location.itemsInside.indexOf(weapon));
 }

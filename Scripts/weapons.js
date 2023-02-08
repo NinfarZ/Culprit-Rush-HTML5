@@ -7,16 +7,11 @@ let weaponClassObj = {
     },
     ranged: {
         canKill(killer, victim) {
-            if (killer.location.adjecentRooms().includes(victim.location)) return true;
+            const killerAdjecentRooms = Object.values(killer.location.adjecentRooms);
+            if (killerAdjecentRooms.includes(victim.location)) return true;
             return false;
         }
-    },
-    trap: {
-        canKill(killer, victim) {
-            return killer.location !== victim.location ? true : false;
-        }
     }
-
 
 }
 
@@ -28,12 +23,21 @@ class Weapon {
         this.weaponClass = weaponClass;
     }
 
+    canKill(killer, victim) {
+        return this.weaponClass.canKill(killer, victim);
+
+    }
+
+    kill(victim) {
+        victim.isAlive = false;
+        console.log(victim);
+    }
+
 }
 
 const knife = new Weapon("Knife", false, "weapon", weaponClassObj.melee);
 const gun = new Weapon("Gun", true, "weapon", weaponClassObj.ranged);
-const poison = new Weapon("Poison", false, "weapon", weaponClassObj.trap);
-export const weapons = { knife, gun, poison };
+export const weapons = { knife, gun };
 console.log(weapons)
 
 
