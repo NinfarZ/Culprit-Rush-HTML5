@@ -1,8 +1,8 @@
 import Character from "./character.js";
 import { dayManager } from "./dayManager.js";
 import { textQueue } from "./uiData.js";
-import { playerFindsWeapon, playerBodyInvestigation } from "./uiOrganizer.js";
-import { updateTextDisplay, caseDetails } from "./gameManager.js";
+import { playerFindsWeapon, playerBodyInvestigation, playerWeaponMissing } from "./uiOrganizer.js";
+import { updateTextDisplay, caseDetails, charRoomBehaviour } from "./gameManager.js";
 import { map } from "./map.js";
 
 
@@ -12,21 +12,41 @@ export default class Player extends Character {
     }
 
     investigate() {
-        if (this.isAnyoneDead()) {
-            textQueue.pushIntoQueue(playerBodyInvestigation(caseDetails["murderWeapon"], caseDetails["timeOfDeath"]));
-            updateTextDisplay();
+
+
+        if (!caseDetails["bodyFound"]) {
+            this.weaponInvestigation();
         }
+        else {
+            if (this.isAnyoneDead())
+                textQueue.pushIntoQueue(playerBodyInvestigation(caseDetails["murderWeapon"], caseDetails["timeOfDeath"]));
+            this.murderInvestigation();
+        }
+
+
+
+
+        map.displayItems();
+
+        updateTextDisplay();
+    }
+
+    weaponInvestigation() {
         if (this.location.itemsInside[0]) {
-            const roomDetails = { [this.location.name]: this.location.itemsInside };
             if (!this.investigationReport.hasOwnProperty(`${this.location.name}`)) {
                 this.investigationReport[this.location.name] = this.location.itemsInside;
+                const item = this.investigationReport[this.location.name][0];
+                textQueue.pushIntoQueue(playerFindsWeapon(item.weaponName, this.location.name))
             }
-            const itemList = this.investigationReport[this.location.name][0];
-            textQueue.pushIntoQueue(playerFindsWeapon(itemList[0], this.location.name))
-            updateTextDisplay();
+        }
+    }
 
-            map.displayItems();
-
+    murderInvestigation() {
+        const whosInsideRoom = [...this.location.whosInside];
+        whosInsideRoom.splice(whosInsideRoom.indexOf(this), 1);
+        if (whosInsideRoom.length >= 1) {
+            for (const char of this.location.whosInside)
+                char.testify();
         }
     }
 

@@ -3,6 +3,8 @@ import { player } from "./gameManager.js";
 import { GameManager, advanceTime } from "./gameManager.js";
 import { setMapActive } from "./inputProcessor.js";
 import { disableMapButton } from "./inputProcessor.js";
+import { playerWeaponMissing } from "./uiOrganizer.js";
+
 
 
 let playerLocationDisplay = document.querySelector("#currentLocation");
@@ -52,24 +54,33 @@ export let map = {
         itemsInside.innerHTML = "";
         if (!player.investigationReport.hasOwnProperty(`${player.location.name}`)) return;
 
+        if (!player.location.itemsInside.length) {
+            textQueue.pushIntoQueue(playerWeaponMissing(player.investigationReport[player.location.name], player.location.name));
+        }
+
         for (const item of player.location.itemsInside) {
             const li = document.createElement("LI");
             li.innerHTML = item.weaponName;
+
             itemsInside.append(li);
         }
     },
     updateMapLocation: function (direction) {
         if (!this.isActive) return;
+        let whereTo;
+        const isSkipTime = advanceTime();
+        if (isSkipTime) whereTo = locations.MyBedroom;
+        else whereTo = this.isDirectionValid(direction);
 
-        let whereTo = this.isDirectionValid(direction);
-        playerLocationDisplay.innerHTML = whereTo.name;
         player.updateLocation(whereTo, player.location);
+        playerLocationDisplay.innerHTML = whereTo.name;
         this.enableValidButtons();
-        this.displayItems();
-        advanceTime();
 
         whosThere.innerHTML = "";
         GameManager[GameManager.gameState]();
+
+        this.displayWhosThere();
+        this.displayItems();
 
 
     },

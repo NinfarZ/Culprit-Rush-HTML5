@@ -14,22 +14,28 @@ const bodyDiscovery = (bodyLocation, victim) => [`You step into the ${bodyLocati
 const bodyInvestigationIntro = (victim) => [`It has happened.`, `Now begins the moment of truth.`, `You have 3 days to unveil the culprit.`, `If you don't, it's game over.`, `Who killed ${victim.charName}?`, `Talk to the others.`, `Listen to their testemonies and reach the truth.`]
 const endOfDay = (day) => [`End of day ${day}. Everyone went back to their rooms for the night.`];
 
-const behaviourSolo = (peopleInside) => [`${pickRandomPerson(peopleInside).charName}'s ${pickLocationBehaviour()} while ${pickSoloMoodBehaviour(peopleInside)}.`];
+const behaviourSolo = (peopleInside) => [`${pickRandomPerson(peopleInside).charName}'s ${pickLocationBehaviour()} while ${pickSoloMoodBehaviour(peopleInside[0])}.`];
 const behaviourGroup = (peopleInside) => [pickGroupMoodBehaviour(peopleInside)];
 
-export const playerFindsWeapon = (item, location) => [`Uh Oh. There's a [ ${item} ] in the ${location}!`];
+export const playerFindsWeapon = (item, location) => [`You found a ${item} in the ${location}!`];
+export const playerWeaponMissing = (item, location) => [`Uh Oh. The ${item} is missing from the ${location}...`];
 export const playerBodyInvestigation = (murderWeapon, timeOfDeath) => [`The victim was killed around ${timeOfDeath}. The murder weapon was a ${murderWeapon.weaponName}.`];
+
+//character intel. Info is taken out of each char investigation reports
+export const seenCharAdjecentRoom = (peopleInside, locationName, time) => [`I saw ${listCharacters(peopleInside)} walking into the ${locationName} at ${time}.`];
+export const seenWeapon = (weaponName, locationName, time) => [`I saw that ${weaponName} in the ${locationName} at ${time}.`];
+export const alibi = (locationName, peopleInside, time) => [`I was with ${listCharacters(peopleInside)} in the ${locationName} at ${time}.`];
 
 const interactionBehaviours = {
     "friendly": [`comforting`, `laughing with`, `telling a joke to`, `hugging`, `complimenting`, `shaking hands with`, `eating a snack with`, `brofisting`],
-    "casual": [`trying to make sense of`, `trying to make small talk with`, `discussing an escape plan with`, `sharing clues about the culprit with`],
-    "angry": [`ignoring`, `frowning at`, `annoyed at`, `cursing at`, `accusing`, `running after`, `threatning`, `slapping`, `spitting at`],
+    "casual": [`focused on`, `chatting with`, `discussing an escape plan with`, `sharing clues with`],
+    "angry": [`ignoring`, `frowning at`, `annoyed at`, `cursing at`, `accusing`, `running after`, `threatning`, `spitting on`, `flipping off`],
 }
 
 const soloBehaviours = {
-    "friendly": [`humming to a tune`, `dancing`, `smilling at you`, `waving at you`, `telling you a funny story`, `saying you look nice today`],
-    "casual": [`yawning`, `deep in thought`, `staring off into the distance`, `trying not to fall asleep`, `stretching`, `looking at you`, `wondering who the culprit is`, `pondering about what to do`],
-    "angry": [`throwing an object in frustration`, `shaking their head in disbelief`, `stomping their foot on the ground in anger`, `growling`, `glaring at you`, `telling you to leave them alone`, `hitting their head on the wall`, `blaming you for everything`]
+    "friendly": [`humming to a tune`, `dancing`, `smilling at you`, `waving at you`, `telling you a funny story`, `saying you look nice`],
+    "casual": [`yawning`, `deep in thought`, `staring off into the distance`, `trying not to fall asleep`, `stretching`, `looking at you`, `letting out a sigh`, `asking you for clues`],
+    "angry": [`throwing an object in frustration`, `shaking their head in disbelief`, `stomping their foot on the ground in anger`, `barking like a dog`, `glaring at you`, `telling you to leave`, `punching the wall`, `blaming you for everything`]
 }
 
 const locationBehaviours = {
@@ -44,7 +50,7 @@ const locationBehaviours = {
 }
 
 function pickSoloMoodBehaviour(peopleInside) {
-    const charMood = getCharMood(peopleInside[0]);
+    const charMood = getCharMood(peopleInside);
     const behaviour = soloBehaviours[charMood][Math.floor(Math.random() * soloBehaviours[charMood].length)];
 
     return behaviour;
@@ -62,10 +68,10 @@ function pickGroupMoodBehaviour(group) {
     const behaviourSpeaker = interactionBehaviours[speakerMood][Math.floor(Math.random() * interactionBehaviours[speakerMood].length)];
     if (speakerMood === listenerMood) {
         const behaviourListener = interactionBehaviours[listenerMood][Math.floor(Math.random() * interactionBehaviours[listenerMood].length)];
-        return `${speaker.charName}'s ${pickLocationBehaviour()} and ${behaviourSpeaker} ${listener.charName}, while ${listenerGender}'s ${behaviourListener} ${speakerGender}.`;
+        return `${speaker.charName}'s ${pickLocationBehaviour()} and ${behaviourSpeaker} ${listener.charName}.`;
     } else {
         const behaviourListener = soloBehaviours[listenerMood][Math.floor(Math.random() * soloBehaviours[listenerMood].length)];
-        return `${speaker.charName}'s ${pickLocationBehaviour()} and ${behaviourSpeaker} ${listener.charName}, while ${listenerGender}'s ${behaviourListener}.`;
+        return `${speaker.charName}'s ${pickLocationBehaviour()} and ${behaviourSpeaker} ${listener.charName}.`;
     }
 
 

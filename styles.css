@@ -75,6 +75,10 @@ body {
 
 }
 
+.text-yellow {
+    color: var(--button-font-color);
+}
+
 .decorationContainer1 {
 
     position: absolute;

@@ -1,15 +1,17 @@
 import { locations } from "./location.js";
 import { dayManager } from "./dayManager.js";
+import { seenWeapon, alibi, seenCharAdjecentRoom } from "./uiOrganizer.js";
+import { caseDetails } from "./gameManager.js";
+import { textQueue } from "./uiData.js";
 
 export default class Character {
-    constructor(charName, isAlive, gender, location, inventory, investigationReport, moodLevel) {
+    constructor(charName, isAlive, gender, location) {
         this.charName = charName;
         this.isAlive = isAlive;
         this.gender = gender;
         this.location = location;
-        this.inventory = inventory;
-        this.investigationReport = investigationReport;
-        this.moodLevel = moodLevel;
+        this.investigationReport = {};
+        this.moodLevel = 0;
     }
 
     updateLocation(newLocation, oldLocation) {
@@ -25,7 +27,7 @@ export default class Character {
 
     startMood() {
         //random mood level between 0.3 and 0.7
-        this.moodLevel = Math.fround(Math.random() * (0.7 - 0.5) + 0.5);
+        this.moodLevel = Math.fround(Math.random() * (1 - 0.5) + 0.5);
     }
 
     moodSwing(multiplier) {
@@ -37,13 +39,51 @@ export default class Character {
 
 
     investigate() {
-        const investigationChance = 30;
-        if (Math.floor(Math.random() * 100) <= investigationChance) {
-            if (this.location.itemsInside) {
-                const roomDetails = { [this.location.name]: this.location.itemsInside };
-                !this.investigationReport.includes(roomDetails) && this.investigationReport.push(roomDetails);
+        const investigationChance = 70;
+
+        if (this.location.itemsInside[0]) {
+            if (Math.floor(Math.random() * 100) <= investigationChance)
+                this.investigationReport[this.location.itemsInside[0].weaponName] = seenWeapon(this.location.itemsInside[0].weaponName, this.location.name, dayManager.getTime());
+
+        }
+        if (this.location.whosInside.length > 1) {
+            if (Math.floor(Math.random() * 100) <= investigationChance) {
+                this.investigationReport[dayManager.getTime()] = alibi(this.location.name, this.location.whosInside, dayManager.getTime());
             }
         }
+        for (const room of Object.values(this.location.adjecentRooms)) {
+            if (!room || !room.isOpen) continue;
+            if (!this.isRoomValid(room)) continue;
+            if (Math.floor(Math.random() * 100) <= investigationChance)
+                this.investigateAdjecentRooms(room);
+
+        }
+        console.log(this.investigationReport);
+    }
+
+    //character will testify with what they know about the case from their investigation report
+    testify() {
+        const victim = caseDetails["victim"];
+        const crimeLocation = caseDetails["victim"].location;
+        const timeOfDeath = caseDetails["timeOfDeath"];
+        const murderWeapon = caseDetails["murderWeapon"];
+
+        if (timeOfDeath in this.investigationReport) textQueue.pushIntoQueue(this.investigationReport[timeOfDeath]);
+
+        if (crimeLocation in this.investigationReport) textQueue.pushIntoQueue(this.investigationReport[crimeLocation]);
+
+        if (murderWeapon in this.investigationReport) textQueue.pushIntoQueue(this.investigationReport[murderWeapon]);
+
+    }
+
+    investigateAdjecentRooms(room) {
+        this.investigationReport[room.name] = seenCharAdjecentRoom(room.whosInside, room.name, dayManager.getTime());
+    }
+
+    isRoomValid(room) {
+        if (!room.whosInside.length) return false
+        if (room.whosInside.length === 1 && room.whosInside[0].charName === "you") return false;
+        return true
     }
 
     randomizeLocation() {
@@ -73,7 +113,8 @@ export default class Character {
         const pickRoom = possibleRooms[Math.floor(Math.random() * possibleRooms.length)]
 
         this.updateLocation(pickRoom, this.location);
-        this.investigate();
+        if (!Object.keys(caseDetails).length) this.investigate();
+
         console.log(`${this.charName} is in the ${pickRoom.name}`);
 
     }

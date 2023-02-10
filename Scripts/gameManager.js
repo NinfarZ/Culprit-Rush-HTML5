@@ -10,19 +10,19 @@ import * as uiModel from "./uiOrganizer.js";
 
 
 
-export const player = new Player("You", true, "M", locations.MyBedroom, {}, [], 0.5);
-const sarah = new Character("Vanessa", true, "F", locations.Cafeteria, {}, [], 0.5);
-const james = new Character("James", true, "M", locations.Cafeteria, {}, [], 0.3);
-const steve = new Character("Steve", true, "M", locations.Cafeteria, {}, [], 0.5);
-const linda = new Character("Wanda", true, "F", locations.Cafeteria, {}, [], 0.5);
-const laela = new Character("Laela", true, "F", locations.Cafeteria, {}, [], 0.7);
-const makoto = new Character("Makoto", true, "M", locations.Cafeteria, {}, [], 0.5);
+export const player = new Player("you", true, "M", locations.MyBedroom);
+const sarah = new Character("Vanessa", true, "F", locations.Cafeteria);
+const james = new Character("James", true, "M", locations.Cafeteria);
+const steve = new Character("Steve", true, "M", locations.Cafeteria);
+const linda = new Character("Wanda", true, "F", locations.Cafeteria);
+const laela = new Character("Laela", true, "F", locations.Cafeteria);
+const makoto = new Character("Makoto", true, "M", locations.Cafeteria);
 
 export let characterList = [sarah, james, steve, linda, laela, makoto];
 
 const chooseKiller = characterList.splice(Math.floor(Math.random() * characterList.length), 1);
 const killerValues = Object.values(chooseKiller[0]);
-export const killer = new Killer(killerValues[0], killerValues[1], killerValues[2], killerValues[3], killerValues[4], killerValues[5], killerValues[6], null, null);
+export const killer = new Killer(killerValues[0], killerValues[1], killerValues[2], killerValues[3], null, null);
 characterList.push(killer);
 
 let killingAnnouncement = false;
@@ -37,6 +37,7 @@ export let caseDetails = {};
 export let GameManager = {
     gameState: "turn",
     setGameStart: function () {
+
         for (const char of characterList) {
             char.randomizeLocation();
             char.startMood();
@@ -57,36 +58,30 @@ export let GameManager = {
     },
     "turn": function () {
 
-        for (const char of characterList) {
-            char.turn()
-        }
-
-        if (dayManager.getTime() === "12:00 am") dayManager.skipToMorning();
-
-
-
         if (killer.weapon && !killer.target) {
             if (killer.canSetTarget(getAvgMood(characterList))) killer.lookForTarget(characterList);
         }
 
-        let whosInsideRoom = [...player.location.whosInside];
-        whosInsideRoom.splice(whosInsideRoom.indexOf(player), 1);
-
-
-        //probability of characters showing behaviour
-        const chanceOfEvent = 38;
-        if (Math.floor(Math.random() * 100) <= chanceOfEvent) {
-            if (whosInsideRoom.length === 1) textQueue.pushIntoQueue(uiModel.behaviourSolo(whosInsideRoom));
-            if (whosInsideRoom.length > 1) textQueue.pushIntoQueue(uiModel.behaviourGroup(whosInsideRoom));
-
-            const averageMood = getAvgMood(whosInsideRoom);
-            updateGroupMood(averageMood);
-
+        for (const char of characterList) {
+            char.turn()
         }
-        map.displayWhosThere();
 
+        for (const location of Object.values(locations)) {
+            const averageMood = getAvgMood(location.whosInside);
+            updateGroupMood(averageMood, location.whosInside);
+        }
+
+        if (player.location.whosInside.length >= 1) charRoomBehaviour();
+
+        if (Object.keys(caseDetails).length !== 0) {
+            if (caseDetails["murderWeapon"].isNoisy) {
+                textQueue.pushIntoQueue(uiModel.killingSound(killer.location));
+
+            }
+        }
 
         updateTextDisplay();
+
     },
 
     "bodySearch": function () {
@@ -103,22 +98,9 @@ export let GameManager = {
         if (player.location === caseDetails["victim"].location) {
             textQueue.pushIntoQueue(uiModel.bodyDiscovery(caseDetails["victim"].location, caseDetails["victim"]));
             textQueue.pushIntoQueue(uiModel.bodyInvestigationIntro(caseDetails["victim"]));
-            bodyFound = true;
+            caseDetails["bodyFound"] = true;
             this.gameState = "murderInvestigation";
-            this.murderInvestigation();
-            return;
         }
-
-        //if the weapon makes a loud noise, the player will be alerted
-        if (caseDetails["murderWeapon"].isNoisy) {
-            if (!killingAnnouncement && !bodyFound) {
-                textQueue.pushIntoQueue(uiModel.killingSound(caseDetails["victim"].location));
-                killingAnnouncement = true;
-            }
-        }
-
-
-        map.displayWhosThere();
 
         updateTextDisplay();
 
@@ -130,30 +112,40 @@ export let GameManager = {
             char.turn()
         }
 
-        map.displayWhosThere();
+        //map.displayWhosThere();
 
         updateTextDisplay();
     }
 }
 
+export function charRoomBehaviour() {
+
+    const whosInsideRoom = [...player.location.whosInside];
+    whosInsideRoom.splice(whosInsideRoom.indexOf(player), 1);
+
+    if (whosInsideRoom.length === 1) textQueue.pushIntoQueue(uiModel.behaviourSolo(whosInsideRoom));
+    if (whosInsideRoom.length > 1) textQueue.pushIntoQueue(uiModel.behaviourGroup(whosInsideRoom));
+}
+
 
 export function onCharKilled(victim) {
+    GameManager.gameState = "bodySearch";
     caseDetails["victim"] = victim;
     caseDetails["timeOfDeath"] = dayManager.getTime();
     caseDetails["murderWeapon"] = killer.weapon;
-    GameManager.gameState = "bodySearch";
-    GameManager["bodySearch"]();
 
 }
 
 export function advanceTime() {
     dayManager.passTheTime();
-    if (!GameManager.gameState === "bodySearch") {
+    if (GameManager.gameState !== "bodySearch") {
         if (dayManager.getTime() === "12:00 am") {
             dayManager.skipToMorning();
-            textQueue.pushIntoQueue(uiModel.endOfDay(dayManager.currentDay));
+            textQueue.pushIntoQueue(uiModel.endOfDay(dayManager.currentDay - 1));
+            return true;
         }
     }
+    return false;
 
 }
 
@@ -168,8 +160,9 @@ function getAvgMood(characterList) {
     return moodSum / totalPeople;
 }
 
-function updateGroupMood(averageMood) {
+function updateGroupMood(averageMood, characterList) {
     for (const char of characterList) {
+        if (char === player) continue;
         if (averageMood > char.moodLevel) char.moodSwing(averageMood * 0.5);
         else if (averageMood < char.moodLevel) char.moodSwing(averageMood * -0.5);
     }

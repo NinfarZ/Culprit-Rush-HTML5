@@ -58,11 +58,11 @@ export const locations = { MyBedroom, Corridor, Corridor2, Classroom, Cafeteria,
 
 
 export function hideWeapons() {
-    const locationList = Object.values(locations)
+    const locationList = Object.values(locations);
     locationList.splice(locationList.indexOf(locations.ControlRoom), 1);
     locationList.splice(locationList.indexOf(locations.MyBedroom), 1);
 
-    for (const weapon of Object.values(weapons)) {
+    for (const weapon of weapons) {
         const randomLocation = locationList[Math.floor(Math.random() * locationList.length)];
         randomLocation.itemsInside.push(weapon);
         locationList.splice(locationList.indexOf(randomLocation), 1);

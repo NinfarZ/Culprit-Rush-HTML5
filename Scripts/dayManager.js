@@ -27,13 +27,7 @@ export let dayManager = {
             }
         }
 
-
-
         if (this.currentHour > 12) this.currentHour = 1
-
-
-
-
 
         updateTimeDisplay(this.currentDay, this.getTime(), this.getPeriod());
     },
