@@ -1,12 +1,11 @@
 import { GameManager, player } from "./gameManager.js";
 import { characterList } from "./gameManager.js";
 import { dayManager } from "./dayManager.js";
-import { disableContinueButton, hideContinueButton, hideInvestigationButton } from "./inputProcessor.js";
+import { disableContinueButton, disableInvestigateButton, hideContinueButton, hideInvestigationButton } from "./inputProcessor.js";
 import { map } from "./map.js";
 
 
-const mainBox = document.querySelector(".mainbox");
-const mainText = document.querySelector(".text");
+const mainText = document.querySelector(".display__text");
 
 
 class UiArray {
@@ -27,20 +26,6 @@ class UiArray {
     }
 }
 
-// const introText = new UiArray(["Welcome.", "You're trapped inside a mysterious building with 10 other people.",
-//     `One of them is dangerous. And will attack at a moment's notice.`,
-//     `You must uncover the culprit to escape.`]);
-// const mapTutorialText = new UiArray([`Use the map interface below to move around.`,
-//     `Keep in mind that every move you make spends a turn.`,
-//     `On each turn, time will pass, and everyone will perform an action.`,
-//     `So watch out.`,
-//     `The culprit is on the move...`]);
-// const findingPeopleExploring = new UiArray([`In the ${player.location} you see ${listCharacters(player.location.whosInside)}`]);
-
-
-
-// export let textQueue = [introText];
-// let queueIndex = 0;
 
 class TextQueue {
     constructor(queue) {
@@ -67,11 +52,11 @@ class TextQueue {
         }
         if (!this.isQueueEmpty()) {
             hideContinueButton(false);
-            hideInvestigationButton(true);
+            disableInvestigateButton(true);
             map.setIsActive(false);
         } else {
             hideContinueButton(true);
-            hideInvestigationButton(false);
+            disableInvestigateButton(false);
 
             map.setIsActive(true);
             return;
@@ -109,7 +94,7 @@ export function typeOut(text, displayArea = mainText) {
             disableContinueButton(false);
             clearInterval(interval);
         }
-    }, 30);
+    }, 15);
 }
 
 

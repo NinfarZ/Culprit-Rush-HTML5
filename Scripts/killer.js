@@ -1,5 +1,5 @@
 import Character from "./character.js";
-import { onCharKilled } from "./gameManager.js";
+import { onCharKilled, characterList } from "./gameManager.js";
 import { removeWeapon } from "./location.js";
 import { dayManager } from "./dayManager.js";
 import { seenWeapon, alibi, seenCharAdjecentRoom } from "./uiOrganizer.js";
@@ -45,24 +45,24 @@ export default class Killer extends Character {
     }
 
     investigate() {
-        const investigationChance = 50;
+        const whosInsideRoom = [...this.location.whosInside];
+        whosInsideRoom.splice(whosInsideRoom.indexOf(this), 1);
 
         if (this.location.itemsInside[0]) {
-            if (Math.floor(Math.random() * 100) <= investigationChance) {
-                this.investigationReport[this.location.itemsInside[0].weaponName] = seenWeapon(this.location.itemsInside[0].weaponName, this.location.name, dayManager.getTime());
-                this.weapon = this.findWeapon(this.location.itemsInside);
-            }
+            //if (Math.floor(Math.random() * 100) <= investigationChance) 
+            this.investigationReport[this.location.itemsInside[0].weaponName] = seenWeapon(this.charName, this.location.itemsInside[0].weaponName, this.location.name, dayManager.getTime());
+            this.weapon = this.findWeapon(this.location.itemsInside);
         }
-        if (this.location.whosInside.length > 1) {
-            if (Math.floor(Math.random() * 100) <= investigationChance) {
-                this.investigationReport[dayManager.getTime()] = alibi(this.location.name, this.location.whosInside, dayManager.getTime());
-            }
+        if (whosInsideRoom.length > 1) {
+            //if (Math.floor(Math.random() * 100) <= investigationChance) {
+            this.investigationReport[dayManager.getTime()] = alibi(this.charName, this.location.name, whosInsideRoom, dayManager.getTime());
+            //}
         }
         for (const room of Object.values(this.location.adjecentRooms)) {
             if (!room || !room.isOpen) continue;
             if (!this.isRoomValid(room)) continue;
-            if (Math.floor(Math.random() * 100) <= investigationChance)
-                this.investigateAdjecentRooms(room);
+            //if (Math.floor(Math.random() * 100) <= investigationChance)
+            this.investigateAdjecentRooms(room);
         }
     }
 
@@ -79,13 +79,13 @@ export default class Killer extends Character {
         return true;
     }
 
-    isTargetAlone() {
-        if (this.location === this.target.location) {
-            if (this.target.location.whosInside.length === 2) return true;
+    isTargetAlone(target) {
+        if (this.location === target.location) {
+            if (target.location.whosInside.length === 2) return true;
             return false;
         }
 
-        if (this.target.location.whosInside.length === 1) return true;
+        if (target.location.whosInside.length === 1) return true;
         return false;
     }
 
@@ -97,53 +97,32 @@ export default class Killer extends Character {
     }
 
     turn() {
-        if (!this.target) {
-            const possibleRooms = this.getPossibleLocations(this.location.adjecentRooms);
-            const pickRoom = possibleRooms[Math.floor(Math.random() * possibleRooms.length)]
+        const possibleRooms = this.getPossibleLocations(this.location.adjecentRooms);
 
-            this.updateLocation(pickRoom, this.location);
-            if (!Object.keys(caseDetails).length) this.investigate();
+        if (!possibleRooms.length) return;
 
-        } else {
-            if (this.hasKilled) return;
-            this.searchForKill();
-        }
+        const pickRoom = possibleRooms[Math.floor(Math.random() * possibleRooms.length)]
+
+        this.updateLocation(pickRoom, this.location);
+
+
+        if (this.hasKilled) return;
+        if (this.weapon) this.searchForKill();
 
     }
 
     searchForKill() {
-        console.log(`killer has target ${this.target.charName}!!!!`);
-        const possibleRooms = this.getPossibleLocations(this.location.adjecentRooms);
-        for (const room of possibleRooms) {
-            switch (this.weapon.weaponClass.className) {
-                case "MELEE":
-                    if (room.whosInside.includes(this.target)) {
-                        this.updateLocation(room, this.location);
-                        return;
-                    }
-                    break;
-                case "RANGED":
-                    const targetAdjecentRooms = this.getPossibleLocations(this.target.location.adjecentRooms);
-                    if (targetAdjecentRooms.includes(room)) {
-                        this.updateLocation(room, this.location);
-                        return;
-                    }
-                    break;
-
-            }
-        }
-        const pickRoom = possibleRooms[Math.floor(Math.random() * possibleRooms.length)]
-        this.updateLocation(pickRoom, this.location);
 
         if (!this.hasKillMood()) return;
-        if (!this.isTargetAlone()) return;
-        if (this.weapon.canKill(this, this.target)) {
-            this.weapon.kill(this.target);
-            this.hasKilled = true;
-            onCharKilled(this.target);
-
-            this.target = null;
-            return;
+        for (const char of characterList) {
+            if (!this.isTargetAlone(char)) return;
+            if (this.weapon.canKill(this, char)) {
+                this.weapon.kill(char);
+                this.hasKilled = true;
+                onCharKilled(char);
+                return;
+            }
         }
+
     }
 }

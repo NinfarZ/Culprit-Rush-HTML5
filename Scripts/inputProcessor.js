@@ -33,6 +33,8 @@ export function hideInvestigationButton(setHide) {
     setHide ? investigationButton.style.display = "none" : investigationButton.style.display = "inline";
 }
 
+
+
 export function setMapActive(state) {
     for (const button of mapInput) {
         state === false ? button.classList.add("disabled-button") : button.classList.remove("disabled-button");
@@ -44,12 +46,23 @@ export function disableMapButton(buttonIndex, setDisabled) {
     const button = mapInput[buttonIndex];
     setDisabled ? button.classList.add("disabled-button") : button.classList.remove("disabled-button");
     button.disabled = setDisabled;
+
     return button;
 }
+
+// function updateButtonBorder(button, setDisabled) {
+//     setDisabled ? button.classList.add(`map-${button.id}--disabled`) : button.classList.remove(`map-${button.id}--disabled`);
+// }
+
 
 export function disableContinueButton(setDisabled) {
     continueButton.disabled = setDisabled;
     setDisabled ? continueButton.classList.add("disabled-button") : continueButton.classList.remove("disabled-button");
+}
+
+export function disableInvestigateButton(setDisabled) {
+    investigationButton.disabled = setDisabled;
+    setDisabled ? investigationButton.classList.add("disabled-button") : investigationButton.classList.remove("disabled-button");
 }
 
 export function disableAllButtons(setDisabled) {

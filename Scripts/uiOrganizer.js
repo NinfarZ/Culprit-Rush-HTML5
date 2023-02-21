@@ -2,14 +2,14 @@ import { characterList, killer, player } from "./gameManager.js";
 
 
 const introText = () => ["Welcome and greetings.", `You're trapped inside a mysterious building with ${characterList.length} other people.`, `${listCharacters(characterList)}.`,
-    `One of them is dangerous. And are likely to attack if in a bad mood.`,
-    `Uncover the culprit and escape.`];
+    `One of them is dangerous. And will attack at a moment's notice.`,
+    `The killer can ONLY attack when in a bad mood.`, `Keep that in mind.`];
 const mapTutorialText = () => [`Use the map interface below to move around.`,
     `Every move you make spends a turn.`,
     `On each turn, time will pass, and everyone will perform an action.`,
     `So watch out.`,
     `The culprit is on the move...`];
-const killingSound = (bodyLocation) => [`A loud violent noise echoed through the building.`, `It came from the ${bodyLocation.name}...`];
+const killingSound = (bodyLocation) => [`A loud violent noise echoed through the building.`, `You should check the ${bodyLocation.name}...`];
 const bodyDiscovery = (bodyLocation, victim) => [`You step into the ${bodyLocation.name}. There, laying cold on the floor, you see ${victim.charName}.`]
 const bodyInvestigationIntro = (victim) => [`It has happened.`, `Now begins the moment of truth.`, `You have 3 days to unveil the culprit.`, `If you don't, it's game over.`, `Who killed ${victim.charName}?`, `Talk to the others.`, `Listen to their testemonies and reach the truth.`]
 const endOfDay = (day) => [`End of day ${day}. Everyone went back to their rooms for the night.`];
@@ -22,9 +22,9 @@ export const playerWeaponMissing = (item, location) => [`Uh Oh. The ${item} is m
 export const playerBodyInvestigation = (murderWeapon, timeOfDeath) => [`The victim was killed around ${timeOfDeath}. The murder weapon was a ${murderWeapon.weaponName}.`];
 
 //character intel. Info is taken out of each char investigation reports
-export const seenCharAdjecentRoom = (peopleInside, locationName, time) => [`I saw ${listCharacters(peopleInside)} walking into the ${locationName} at ${time}.`];
-export const seenWeapon = (weaponName, locationName, time) => [`I saw that ${weaponName} in the ${locationName} at ${time}.`];
-export const alibi = (locationName, peopleInside, time) => [`I was with ${listCharacters(peopleInside)} in the ${locationName} at ${time}.`];
+export const seenCharAdjecentRoom = (charName, peopleInside, locationName, time) => [`${charName}: "I saw ${listCharacters(peopleInside)} walking into the ${locationName} at ${time}."`];
+export const seenWeapon = (charName, weaponName, locationName, time) => [`${charName}: "I saw a ${weaponName} in the ${locationName} at ${time}."`];
+export const alibi = (charName, locationName, peopleInside, time) => [`${charName}: "I was with ${listCharacters(peopleInside)} in the ${locationName} at ${time}."`];
 
 const interactionBehaviours = {
     "friendly": [`comforting`, `laughing with`, `telling a joke to`, `hugging`, `complimenting`, `shaking hands with`, `eating a snack with`, `brofisting`],

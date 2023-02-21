@@ -27,46 +27,86 @@
 </head>
 
 <body>
-    <div class="outerGrid">
-        <div class="decorationContainer1"></div>
-        <main class="mainInfoContainer">
-
-            <div class="mainbox mainBoxBorder">
-                <div class="time"><span class="time-day">Day 1</span> <span class="time-hours">7:00 am</span><span
-                        class="time-period">Morning</span></div>
-                <button class="start-button">Start Game</button>
-                <p class="text">
-
-                </p>
-
-                <div class="mainbox-button-container">
-                    <button class="investigate-button">investigate</button>
-                    <button class="continue-button">&raquo;</button>
-                </div>
+    <div class="wrapper">
+        <section class="display">
+            <div class="display__time"><span class="display__time--day">Day 1</span> <span
+                    class="display__time--hours">7:00 am</span><span class="display__time--period">Morning</span>
             </div>
-        </main>
 
-        <section class="mapControl">
-            <div class="people-inside map-side-container">
-                <p class="map-side-container-label">Who's there?</p>
-                <ul class="people-inside-names"></ul>
+            <p class="display__text">
 
-            </div>
-            <div class="mapContainer">
-                <button id="left" class="mapLeft map-container__btn"><span class="icon">&#10094;</span></button>
-                <button id="right" class="mapRight map-container__btn"><span class="icon">&#10094;</span></button>
-                <button id="forward" class="mapTop map-container__btn"><span class="icon">&#10094;</span></button>
-                <button id="back" class="mapBottom map-container__btn"><span class="icon">&#10094;</span></button>
-                <h1 id="currentLocation"></h1>
-            </div>
-            <div class="items-inside map-side-container">
-                <p class="map-side-container-label">Items inside:</p>
-                <ul class="items-inside-names"></ul>
+            </p>
 
-            </div>
         </section>
     </div>
 
+
+
+
+    <section class="map-control">
+        <div class="map-control__people-inside">
+            <p class="map-control__people-inside--label">Who's there?</p>
+            <ul class="map-control__people-inside--names"></ul>
+
+        </div>
+        <div class="map-control__directional-pad">
+            <button class="map-control__directional-pad--start-button">Start</button>
+            <button class="map-control__directional-pad--investigate">&#x1F50E;&#xFE0E;</button>
+            <button class="map-control__directional-pad--continue">OK</button>
+            <button id="left" class="map-control__directional-pad--button map-control__directional-pad--left"><span
+                    class="map-control__directional-pad--icon"></span></button>
+            <button id="right" class="map-control__directional-pad--button map-control__directional-pad--right"><span
+                    class="map-control__directional-pad--icon"></span></button>
+            <button id="forward"
+                class="map-control__directional-pad--button map-control__directional-pad--forward"><span
+                    class="map-control__directional-pad--icon"></span></button>
+            <button id="back" class="map-control__directional-pad--button map-control__directional-pad--back"><span
+                    class="map-control__directional-pad--icon"></span></button>
+            <p id="location" class="map-control__directional-pad--location"></p>
+        </div>
+        <div class="map-control__investigation">
+            <div class="map-control__investigation--suspects">
+                <p class="map-control__investigation--suspects-label">SUSPECTS:</p>
+
+                <div>
+                    <label for="laela">Laela</label>
+                    <input type="checkbox" name="Laela" id="laela">
+                </div>
+
+                <div>
+                    <label for="james">James</label>
+                    <input type="checkbox" name="James" id="james">
+                </div>
+
+                <div>
+                    <label for="vanessa">Vanessa</label>
+                    <input type="checkbox" name="Vanessa" id="vanessa">
+                </div>
+
+                <div>
+                    <label for="steve">Steve</label>
+                    <input type="checkbox" name="Steve" id="steve">
+                </div>
+
+                <div>
+                    <label for="wanda">Wanda</label>
+                    <input type="checkbox" name="Wanda" id="wanda">
+                </div>
+
+                <div>
+                    <label for="makoto">Makoto</label>
+                    <input type="checkbox" name="Makoto" id="makoto">
+                </div>
+            </div>
+            <div class="map-control__investigation--case-details">
+                <p class="map-control__investigation--case-details-label">CASE:</p>
+                <ul class="map-control__investigation--case-details-list">
+
+                </ul>
+            </div>
+        </div>
+
+    </section>
 </body>
 
 </html>

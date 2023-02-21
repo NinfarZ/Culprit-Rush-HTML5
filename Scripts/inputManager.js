@@ -9,9 +9,9 @@
 
 
 const mainBoxInput = document.querySelector(".main-box__input");
-export const mainButton = document.querySelector(".start-button");
-export const continueButton = document.querySelector(".continue-button");
-export const investigationButton = document.querySelector(".investigate-button");
+export const mainButton = document.querySelector(".map-control__directional-pad--start-button");
+export const continueButton = document.querySelector(".map-control__directional-pad--continue");
+export const investigationButton = document.querySelector(".map-control__directional-pad--investigate");
 
 
 

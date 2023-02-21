@@ -1,8 +1,8 @@
 //manages the contents of each day in the game
 
-const dayDisplay = document.querySelector(".time-day");
-const hoursDisplay = document.querySelector(".time-hours");
-const periodDisplay = document.querySelector(".time-period");
+const dayDisplay = document.querySelector(".display__time--day");
+const hoursDisplay = document.querySelector(".display__time--hours");
+const periodDisplay = document.querySelector(".display__time--period");
 
 export let dayManager = {
     currentDay: 1,

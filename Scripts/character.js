@@ -1,7 +1,7 @@
 import { locations } from "./location.js";
 import { dayManager } from "./dayManager.js";
 import { seenWeapon, alibi, seenCharAdjecentRoom } from "./uiOrganizer.js";
-import { caseDetails } from "./gameManager.js";
+import { caseDetails, player } from "./gameManager.js";
 import { textQueue } from "./uiData.js";
 
 export default class Character {
@@ -39,23 +39,25 @@ export default class Character {
 
 
     investigate() {
-        const investigationChance = 70;
+
+        const whosInsideRoom = [...this.location.whosInside];
+        whosInsideRoom.splice(whosInsideRoom.indexOf(this), 1);
 
         if (this.location.itemsInside[0]) {
-            if (Math.floor(Math.random() * 100) <= investigationChance)
-                this.investigationReport[this.location.itemsInside[0].weaponName] = seenWeapon(this.location.itemsInside[0].weaponName, this.location.name, dayManager.getTime());
+            //if (Math.floor(Math.random() * 100) <= investigationChance)
+            this.investigationReport[this.location.itemsInside[0].weaponName] = seenWeapon(this.charName, this.location.itemsInside[0].weaponName, this.location.name, dayManager.getTime());
 
         }
-        if (this.location.whosInside.length > 1) {
-            if (Math.floor(Math.random() * 100) <= investigationChance) {
-                this.investigationReport[dayManager.getTime()] = alibi(this.location.name, this.location.whosInside, dayManager.getTime());
-            }
+        if (whosInsideRoom.length > 1) {
+            //if (Math.floor(Math.random() * 100) <= investigationChance) {
+            this.investigationReport[dayManager.getTime()] = alibi(this.charName, this.location.name, whosInsideRoom, dayManager.getTime());
+            //}
         }
         for (const room of Object.values(this.location.adjecentRooms)) {
             if (!room || !room.isOpen) continue;
             if (!this.isRoomValid(room)) continue;
-            if (Math.floor(Math.random() * 100) <= investigationChance)
-                this.investigateAdjecentRooms(room);
+            //if (Math.floor(Math.random() * 100) <= investigationChance)
+            this.investigateAdjecentRooms(room);
 
         }
         console.log(this.investigationReport);
@@ -63,21 +65,24 @@ export default class Character {
 
     //character will testify with what they know about the case from their investigation report
     testify() {
+        if (!this.isAlive) return;
+
         const victim = caseDetails["victim"];
-        const crimeLocation = caseDetails["victim"].location;
+        const crimeLocation = caseDetails["victim"].location.name;
         const timeOfDeath = caseDetails["timeOfDeath"];
-        const murderWeapon = caseDetails["murderWeapon"];
+        const murderWeapon = caseDetails["murderWeapon"].weaponName;
 
         if (timeOfDeath in this.investigationReport) textQueue.pushIntoQueue(this.investigationReport[timeOfDeath]);
 
         if (crimeLocation in this.investigationReport) textQueue.pushIntoQueue(this.investigationReport[crimeLocation]);
 
         if (murderWeapon in this.investigationReport) textQueue.pushIntoQueue(this.investigationReport[murderWeapon]);
+        console.log(textQueue);
 
     }
 
     investigateAdjecentRooms(room) {
-        this.investigationReport[room.name] = seenCharAdjecentRoom(room.whosInside, room.name, dayManager.getTime());
+        this.investigationReport[room.name] = seenCharAdjecentRoom(this.charName, room.whosInside, room.name, dayManager.getTime());
     }
 
     isRoomValid(room) {
@@ -96,8 +101,14 @@ export default class Character {
         const possibleLocations = [];
         const ignoreBathroom = this.gender === "M" ? "Bathroom F" : "Bathroom M";
         for (const location of Object.values(locations)) {
+
             if (!location) continue;
             if (location.name === ignoreBathroom) continue;
+
+            const whosInside = [...location.whosInside];
+            whosInside.splice(whosInside.indexOf(player), 1);
+
+            if (whosInside.length > 1) continue
             if (location.isOpen) possibleLocations.push(location);
         }
         return possibleLocations;
@@ -106,14 +117,12 @@ export default class Character {
     turn() {
         if (!this.isAlive) return;
 
-        const chanceOfMoving = 50;
-        if (Math.floor(Math.random() * 100) <= chanceOfMoving) return;
-
         const possibleRooms = this.getPossibleLocations(this.location.adjecentRooms);
+
+        if (!possibleRooms.length) return;
         const pickRoom = possibleRooms[Math.floor(Math.random() * possibleRooms.length)]
 
         this.updateLocation(pickRoom, this.location);
-        if (!Object.keys(caseDetails).length) this.investigate();
 
         console.log(`${this.charName} is in the ${pickRoom.name}`);
 

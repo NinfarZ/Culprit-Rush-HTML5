@@ -11,14 +11,14 @@ import * as uiModel from "./uiOrganizer.js";
 
 
 export const player = new Player("you", true, "M", locations.MyBedroom);
-const sarah = new Character("Vanessa", true, "F", locations.Cafeteria);
+const vanessa = new Character("Vanessa", true, "F", locations.Cafeteria);
 const james = new Character("James", true, "M", locations.Cafeteria);
 const steve = new Character("Steve", true, "M", locations.Cafeteria);
-const linda = new Character("Wanda", true, "F", locations.Cafeteria);
+const wanda = new Character("Wanda", true, "F", locations.Cafeteria);
 const laela = new Character("Laela", true, "F", locations.Cafeteria);
 const makoto = new Character("Makoto", true, "M", locations.Cafeteria);
 
-export let characterList = [sarah, james, steve, linda, laela, makoto];
+export let characterList = [vanessa, james, steve, wanda, laela, makoto];
 
 const chooseKiller = characterList.splice(Math.floor(Math.random() * characterList.length), 1);
 const killerValues = Object.values(chooseKiller[0]);
@@ -58,12 +58,13 @@ export let GameManager = {
     },
     "turn": function () {
 
-        if (killer.weapon && !killer.target) {
-            if (killer.canSetTarget(getAvgMood(characterList))) killer.lookForTarget(characterList);
+        //first every character moves rooms and only then investigate
+        for (const char of characterList) {
+            char.turn()
         }
 
         for (const char of characterList) {
-            char.turn()
+            if (!Object.keys(caseDetails).length) char.investigate();
         }
 
         for (const location of Object.values(locations)) {
@@ -75,7 +76,7 @@ export let GameManager = {
 
         if (Object.keys(caseDetails).length !== 0) {
             if (caseDetails["murderWeapon"].isNoisy) {
-                textQueue.pushIntoQueue(uiModel.killingSound(killer.location));
+                textQueue.pushIntoQueue(uiModel.killingSound(caseDetails["victim"].location));
 
             }
         }
@@ -132,6 +133,7 @@ export function onCharKilled(victim) {
     GameManager.gameState = "bodySearch";
     caseDetails["victim"] = victim;
     caseDetails["timeOfDeath"] = dayManager.getTime();
+    caseDetails["crimeScene"] = victim.location;
     caseDetails["murderWeapon"] = killer.weapon;
 
 }
