@@ -2,17 +2,17 @@
 let weaponClassObj = {
     melee: {
         className: "MELEE",
-        classRules: "the killer must be in the SAME ROOM as the victim",
+        classRules: "The culprit must've bee in the SAME ROOM as the victim.",
         canKill(killer, victim) {
             return killer.location === victim.location ? true : false;
         }
     },
     ranged: {
         className: "RANGED",
-        classRules: "the killer must be in a room ADJECENT to the victim",
+        classRules: "The culprit was either in the SAME ROOM as the victim or in a room NEXT to the victim.",
         canKill(killer, victim) {
             const killerAdjecentRooms = Object.values(killer.location.adjecentRooms);
-            if (killerAdjecentRooms.includes(victim.location)) return true;
+            if (killerAdjecentRooms.includes(victim.location) || killer.location === victim.location) return true;
             return false;
         }
     }
@@ -44,8 +44,10 @@ class Weapon {
 }
 
 const knife = new Weapon("Knife", false, "weapon", weaponClassObj.melee);
+const silentGun = new Weapon("Silent Gun", false, "weapon", weaponClassObj.ranged);
+const shotgun = new Weapon("Shotgun", true, "weapon", weaponClassObj.melee);
 const gun = new Weapon("Gun", true, "weapon", weaponClassObj.ranged);
-export const weapons = [knife, gun];
-console.log(weapons)
+export const weapons = [knife, gun, silentGun, shotgun];
+
 
 

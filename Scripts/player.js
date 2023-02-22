@@ -2,11 +2,12 @@ import Character from "./character.js";
 import { dayManager } from "./dayManager.js";
 import { textQueue } from "./uiData.js";
 import { playerFindsWeapon, playerBodyInvestigation, playerWeaponMissing } from "./uiOrganizer.js";
-import { updateTextDisplay, caseDetails, charRoomBehaviour } from "./gameManager.js";
+import { updateTextDisplay, caseDetails, charRoomBehaviour, victim } from "./gameManager.js";
 import { map } from "./map.js";
 import { hideInvestigationButton } from "./inputProcessor.js";
 
-const caseDetailsDisplay = document.querySelector(".map-control__investigation--case-details-list");
+const caseDetailsList = document.querySelector(".map-control__investigation--case-details-list");
+const caseDetailsDisplay = document.querySelector(".map-control__investigation--case-details");
 let caseDetailsUpdated = false;
 
 export default class Player extends Character {
@@ -23,6 +24,7 @@ export default class Player extends Character {
         else {
             if (this.isAnyoneDead()) {
                 textQueue.pushIntoQueue(playerBodyInvestigation(caseDetails["murderWeapon"], caseDetails["timeOfDeath"]));
+                textQueue.pushIntoQueue([caseDetails["murderWeapon"].weaponClass.classRules]);
                 if (!caseDetailsUpdated) this.updateCaseDetailsDisplay();
             }
             this.murderInvestigation();
@@ -32,18 +34,19 @@ export default class Player extends Character {
     }
 
     updateCaseDetailsDisplay() {
-        const victim = caseDetails["victim"].charName;
-        const location = caseDetails["crimeScene"].name;
+        const victim = caseDetails["victim"].map(char => char.charName);
+        const location = caseDetails["crimeScene"].map(location => location.name);
         const timeOfDeath = caseDetails["timeOfDeath"];
         const murderWeapon = caseDetails["murderWeapon"].weaponName;
 
-        const details = ["Victim: " + victim, "Location: " + location, "Time: " + timeOfDeath, "Weapon: " + murderWeapon];
+        const details = ["Victim(s): " + victim, "Location(s): " + location, "Time: " + timeOfDeath, "Weapon: " + murderWeapon];
 
         for (const detail of details) {
             const li = document.createElement("LI");
             li.innerHTML = detail;
-            caseDetailsDisplay.append(li);
+            caseDetailsList.append(li);
         }
+        caseDetailsDisplay.display = "static";
         caseDetailsUpdated = true;
     }
 
@@ -82,7 +85,7 @@ export default class Player extends Character {
     }
 
     isAnyoneDead() {
-        if (this.location.whosInside.includes(caseDetails["victim"])) return true;
+        if (caseDetails["crimeScene"].includes(this.location)) return true;
         return false;
     }
 }

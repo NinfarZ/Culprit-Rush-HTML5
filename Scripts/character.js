@@ -67,17 +67,36 @@ export default class Character {
     testify() {
         if (!this.isAlive) return;
 
-        const victim = caseDetails["victim"];
-        const crimeLocation = caseDetails["victim"].location.name;
+        let hasNoInfo = true;
+        const victims = caseDetails["victim"];
+        const crimeLocations = caseDetails["crimeScene"].map(location => location.name);
         const timeOfDeath = caseDetails["timeOfDeath"];
         const murderWeapon = caseDetails["murderWeapon"].weaponName;
 
-        if (timeOfDeath in this.investigationReport) textQueue.pushIntoQueue(this.investigationReport[timeOfDeath]);
 
-        if (crimeLocation in this.investigationReport) textQueue.pushIntoQueue(this.investigationReport[crimeLocation]);
+        if (timeOfDeath in this.investigationReport) {
+            const time = this.investigationReport[timeOfDeath].slice();
+            textQueue.pushIntoQueue(time);
+            hasNoInfo = false;
 
-        if (murderWeapon in this.investigationReport) textQueue.pushIntoQueue(this.investigationReport[murderWeapon]);
-        console.log(textQueue);
+        }
+
+        for (const location of crimeLocations) {
+            if (location in this.investigationReport) {
+                const crimeScene = this.investigationReport[location].slice();
+                textQueue.pushIntoQueue(crimeScene);
+                hasNoInfo = false;
+
+            }
+        }
+
+        if (murderWeapon in this.investigationReport) {
+            const weapon = this.investigationReport[murderWeapon].slice();
+            textQueue.pushIntoQueue(weapon);
+            hasNoInfo = false;
+        }
+        if (hasNoInfo) textQueue.pushIntoQueue([`${this.charName}: I saw nothing.`]);
+
 
     }
 
@@ -116,15 +135,17 @@ export default class Character {
 
     turn() {
         if (!this.isAlive) return;
+        if (Math.floor(Math.random() * 100) < 50) return;
 
         const possibleRooms = this.getPossibleLocations(this.location.adjecentRooms);
-
+        console.log(`${this.charName} was in the ${this.location.name}`);
         if (!possibleRooms.length) return;
         const pickRoom = possibleRooms[Math.floor(Math.random() * possibleRooms.length)]
 
         this.updateLocation(pickRoom, this.location);
+        console.log(`${this.charName} went to the ${this.location.name}`);
 
-        console.log(`${this.charName} is in the ${pickRoom.name}`);
+
 
     }
 }

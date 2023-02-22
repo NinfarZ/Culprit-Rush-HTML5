@@ -10,8 +10,9 @@ const mapTutorialText = () => [`Use the map interface below to move around.`,
     `So watch out.`,
     `The culprit is on the move...`];
 const killingSound = (bodyLocation) => [`A loud violent noise echoed through the building.`, `You should check the ${bodyLocation.name}...`];
-const bodyDiscovery = (bodyLocation, victim) => [`You step into the ${bodyLocation.name}. There, laying cold on the floor, you see ${victim.charName}.`]
-const bodyInvestigationIntro = (victim) => [`It has happened.`, `Now begins the moment of truth.`, `You have 3 days to unveil the culprit.`, `If you don't, it's game over.`, `Who killed ${victim.charName}?`, `Talk to the others.`, `Listen to their testemonies and reach the truth.`]
+const bodyDiscovery = (bodyLocation, victimList) => [`You step into the ${bodyLocation.name}. There, laying cold on the floor, you see ${listCharacters(victimList)}.`];
+const bodyDiscoveryNotOver = (bodyLocation) => [`And that's not all. You should check the ${bodyLocation.name}...`];
+const bodyInvestigationIntro = (victimList) => [`It has happened.`, `Now begins the moment of truth.`, `You have 1 day to unveil the culprit.`, `If you don't, it's game over.`, `Who killed ${listCharacters(victimList)}?`, `Talk to the others.`, `Listen to their testemonies and reach the truth.`, `Submit your answer bellow on who did it.`, `You only have ONE chance.`]
 const endOfDay = (day) => [`End of day ${day}. Everyone went back to their rooms for the night.`];
 
 const behaviourSolo = (peopleInside) => [`${pickRandomPerson(peopleInside).charName}'s ${pickLocationBehaviour()} while ${pickSoloMoodBehaviour(peopleInside[0])}.`];
@@ -25,6 +26,10 @@ export const playerBodyInvestigation = (murderWeapon, timeOfDeath) => [`The vict
 export const seenCharAdjecentRoom = (charName, peopleInside, locationName, time) => [`${charName}: "I saw ${listCharacters(peopleInside)} walking into the ${locationName} at ${time}."`];
 export const seenWeapon = (charName, weaponName, locationName, time) => [`${charName}: "I saw a ${weaponName} in the ${locationName} at ${time}."`];
 export const alibi = (charName, locationName, peopleInside, time) => [`${charName}: "I was with ${listCharacters(peopleInside)} in the ${locationName} at ${time}."`];
+
+const correctSuspectChosen = (killerName) => [`. . .`, `Good job.`, `The culprit was indeed ${killerName}.`];
+const wrongSuspectChosen = (guessName, killerName) => [`. . .`, `Good job.`, `But you are wrong...`, `The culprit wasn't ${guessName}.`, `It was ${killerName}.`];
+const wrongSuspectVictim = (guessName, killerName) => [`. . .`, `Hmmm.`, `${guessName} was a victim were they not?`, `Are you saying it was suicide?`, `Well, it wasn't.`, `The culprit was ${killerName}.`];
 
 const interactionBehaviours = {
     "friendly": [`comforting`, `laughing with`, `telling a joke to`, `hugging`, `complimenting`, `shaking hands with`, `eating a snack with`, `brofisting`],
@@ -113,7 +118,10 @@ function pickRandomPerson(characterList, index = Math.random() * characterList.l
     return randomPerson;
 }
 
-export { introText, mapTutorialText, behaviourSolo, behaviourGroup, killingSound, bodyDiscovery, bodyInvestigationIntro, endOfDay };
+export {
+    introText, mapTutorialText, behaviourSolo, behaviourGroup, killingSound, bodyDiscovery,
+    bodyDiscoveryNotOver, bodyInvestigationIntro, endOfDay, wrongSuspectChosen, correctSuspectChosen, wrongSuspectVictim
+};
 
 function listCharacters(characterList) {
     let namesString = " ";

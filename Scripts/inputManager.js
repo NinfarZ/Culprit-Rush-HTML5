@@ -12,6 +12,8 @@ const mainBoxInput = document.querySelector(".main-box__input");
 export const mainButton = document.querySelector(".map-control__directional-pad--start-button");
 export const continueButton = document.querySelector(".map-control__directional-pad--continue");
 export const investigationButton = document.querySelector(".map-control__directional-pad--investigate");
+export const culpritSubmitButton = document.querySelector(".map-control__investigation--suspects-button");
+export const suspectRadioButtons = document.getElementsByName("suspect");
 
 
 

@@ -1,7 +1,7 @@
 import { GameManager, player } from "./gameManager.js";
 import { characterList } from "./gameManager.js";
 import { dayManager } from "./dayManager.js";
-import { disableContinueButton, disableInvestigateButton, hideContinueButton, hideInvestigationButton } from "./inputProcessor.js";
+import { disableContinueButton, disableInvestigateButton, hideContinueButton, hideInvestigationButton, disableSubmitButton } from "./inputProcessor.js";
 import { map } from "./map.js";
 
 
@@ -53,10 +53,12 @@ class TextQueue {
         if (!this.isQueueEmpty()) {
             hideContinueButton(false);
             disableInvestigateButton(true);
+            disableSubmitButton(true);
             map.setIsActive(false);
         } else {
             hideContinueButton(true);
             disableInvestigateButton(false);
+            disableSubmitButton(false);
 
             map.setIsActive(true);
             return;

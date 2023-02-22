@@ -1,5 +1,5 @@
 import Character from "./character.js";
-import { onCharKilled, characterList } from "./gameManager.js";
+import { onCharKilled, characterList, player } from "./gameManager.js";
 import { removeWeapon } from "./location.js";
 import { dayManager } from "./dayManager.js";
 import { seenWeapon, alibi, seenCharAdjecentRoom } from "./uiOrganizer.js";
@@ -15,7 +15,6 @@ export default class Killer extends Character {
     }
     findWeapon(roomDetails) {
         if (this.weapon) return;
-        if (this.location.whosInside > 1) return;
         const pickWeaponChance = 50;
         if (Math.floor(Math.random() * 100) > pickWeaponChance) return;
 
@@ -51,7 +50,7 @@ export default class Killer extends Character {
         if (this.location.itemsInside[0]) {
             //if (Math.floor(Math.random() * 100) <= investigationChance) 
             this.investigationReport[this.location.itemsInside[0].weaponName] = seenWeapon(this.charName, this.location.itemsInside[0].weaponName, this.location.name, dayManager.getTime());
-            this.weapon = this.findWeapon(this.location.itemsInside);
+            if (!this.weapon) this.weapon = this.findWeapon(this.location.itemsInside);
         }
         if (whosInsideRoom.length > 1) {
             //if (Math.floor(Math.random() * 100) <= investigationChance) {
@@ -79,14 +78,13 @@ export default class Killer extends Character {
         return true;
     }
 
-    isTargetAlone(target) {
-        if (this.location === target.location) {
-            if (target.location.whosInside.length === 2) return true;
-            return false;
-        }
-
-        if (target.location.whosInside.length === 1) return true;
+    isPlayerAway(char) {
+        if (char.location !== player.location && this.location !== player.location) return true;
         return false;
+    }
+
+    isCharWitness(char) {
+        return char.location === this.location ? true : false;
     }
 
     lookForTarget(characterList) {
@@ -97,6 +95,9 @@ export default class Killer extends Character {
     }
 
     turn() {
+        if (!this.hasKilled) {
+            if (Math.floor(Math.random() * 100) < 50) return;
+        }
         const possibleRooms = this.getPossibleLocations(this.location.adjecentRooms);
 
         if (!possibleRooms.length) return;
@@ -105,24 +106,28 @@ export default class Killer extends Character {
 
         this.updateLocation(pickRoom, this.location);
 
-
-        if (this.hasKilled) return;
-        if (this.weapon) this.searchForKill();
-
     }
 
     searchForKill() {
 
+        if (this.hasKilled) return;
         if (!this.hasKillMood()) return;
-        for (const char of characterList) {
-            if (!this.isTargetAlone(char)) return;
-            if (this.weapon.canKill(this, char)) {
-                this.weapon.kill(char);
-                this.hasKilled = true;
-                onCharKilled(char);
-                return;
+
+        let victimList = [];
+        const possibleTargets = characterList.filter(char => char !== this && this.weapon.canKill(this, char) && this.isCharWitness);
+        console.log(`possible target list is ${possibleTargets}`);
+
+        for (const char of possibleTargets) {
+            if (victimList.length < 2) {
+                if (this.isPlayerAway(char)) {
+                    this.weapon.kill(char);
+                    victimList.push(char);
+                    this.hasKilled = true
+                }
             }
         }
 
+        if (this.hasKilled) onCharKilled(victimList);
+        console.log(`victim list is ${victimList}`);
     }
 }

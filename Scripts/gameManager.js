@@ -7,6 +7,7 @@ import { dayManager } from "./dayManager.js";
 import Character from "./character.js";
 import Killer from "./killer.js";
 import * as uiModel from "./uiOrganizer.js";
+import { hideSubmitButton, removeRadioButtons } from "./inputProcessor.js";
 
 
 
@@ -26,10 +27,11 @@ export const killer = new Killer(killerValues[0], killerValues[1], killerValues[
 characterList.push(killer);
 
 let killingAnnouncement = false;
-let bodyFound = false;
+let crimeDiscovered = false;
 export let victim = null;
 let timeOfDeath = null;
 let murderWeapon = null;
+let victimsFound = [];
 
 export let caseDetails = {};
 
@@ -58,14 +60,18 @@ export let GameManager = {
     },
     "turn": function () {
 
+
         //first every character moves rooms and only then investigate
         for (const char of characterList) {
             char.turn()
         }
 
-        for (const char of characterList) {
+        if (!Object.keys(caseDetails).length) killer.investigate();
+        for (const char of characterList.filter(char => char !== killer)) {
             if (!Object.keys(caseDetails).length) char.investigate();
         }
+
+        if (killer.weapon) killer.searchForKill();
 
         for (const location of Object.values(locations)) {
             const averageMood = getAvgMood(location.whosInside);
@@ -76,7 +82,7 @@ export let GameManager = {
 
         if (Object.keys(caseDetails).length !== 0) {
             if (caseDetails["murderWeapon"].isNoisy) {
-                textQueue.pushIntoQueue(uiModel.killingSound(caseDetails["victim"].location));
+                textQueue.pushIntoQueue(uiModel.killingSound(caseDetails["victim"][0].location));
 
             }
         }
@@ -88,18 +94,30 @@ export let GameManager = {
     "bodySearch": function () {
 
         console.log("it's time to look for the body");
-
-
         //characters will move until they find the crime scene
         for (const char of characterList) {
-            if (char.location !== caseDetails["victim"].location) char.turn()
+            if (!victimsFound.length === caseDetails["victim"].length) char.turn()
 
         }
 
-        if (player.location === caseDetails["victim"].location) {
-            textQueue.pushIntoQueue(uiModel.bodyDiscovery(caseDetails["victim"].location, caseDetails["victim"]));
-            textQueue.pushIntoQueue(uiModel.bodyInvestigationIntro(caseDetails["victim"]));
-            caseDetails["bodyFound"] = true;
+        if (caseDetails["crimeScene"].includes(player.location)) {
+            const victims = player.location.whosInside.filter(char => !char.isAlive && !victimsFound.includes(char));
+            victimsFound.push(...victims);
+
+            if (!caseDetails["bodyFound"]) {
+                textQueue.pushIntoQueue(uiModel.bodyDiscovery(player.location, victims));
+                if (victimsFound.length < caseDetails["victim"].length) {
+                    const otherLocation = caseDetails["crimeScene"].filter(location => location !== player.location);
+                    textQueue.pushIntoQueue(uiModel.bodyDiscoveryNotOver(otherLocation[0]));
+                }
+                caseDetails["bodyFound"] = true;
+            }
+
+        }
+        if (victimsFound.length === caseDetails["victim"].length) {
+
+            textQueue.pushIntoQueue(uiModel.bodyInvestigationIntro(victimsFound));
+            hideSubmitButton(false);
             this.gameState = "murderInvestigation";
         }
 
@@ -109,11 +127,8 @@ export let GameManager = {
 
     "murderInvestigation": function () {
         console.log("it's time to investigate the truth");
-        for (const char of characterList) {
-            char.turn()
-        }
 
-        //map.displayWhosThere();
+
 
         updateTextDisplay();
     }
@@ -129,11 +144,11 @@ export function charRoomBehaviour() {
 }
 
 
-export function onCharKilled(victim) {
+export function onCharKilled(victimList) {
     GameManager.gameState = "bodySearch";
-    caseDetails["victim"] = victim;
+    caseDetails["victim"] = victimList;
     caseDetails["timeOfDeath"] = dayManager.getTime();
-    caseDetails["crimeScene"] = victim.location;
+    caseDetails["crimeScene"] = victimList.length > 1 ? [victimList[0].location, victimList[1].location] : [victimList[0].location];
     caseDetails["murderWeapon"] = killer.weapon;
 
 }
@@ -176,8 +191,6 @@ export function updateTextDisplay() {
 }
 
 
-const mainInfoDisplay = document.createElement("DIV");
-
 map.setIsActive(false);
 
 
@@ -188,6 +201,34 @@ export function createPlayer() {
     player.charName = playerInput.value;
     GameManager.setGameStart();
 }
+
+export function submitSuspect(suspect) {
+    if (suspect === killer.charName) {
+        textQueue.pushIntoQueue(uiModel.correctSuspectChosen(suspect));
+        removeVictimsAndKiller(caseDetails["victim"], killer);
+    } else if (caseDetails["victim"].map(victim => victim.charName).includes(suspect)) {
+        textQueue.pushIntoQueue(uiModel.wrongSuspectVictim(suspect, killer.charName));
+    } else {
+        textQueue.pushIntoQueue(uiModel.wrongSuspectChosen(suspect, killer.charName));
+    }
+    updateTextDisplay();
+}
+
+function removeVictimsAndKiller(victimList, killer) {
+    characterList.splice(characterList.indexOf(killer), 1);
+    victimList.forEach(victim => {
+        characterList.splice(characterList.indexOf(victim), 1);
+    });
+    const namesToRemove = victimList.map(victim => victim.charName);
+    namesToRemove.push(killer.charName);
+    removeRadioButtons(namesToRemove);
+
+}
+
+function newRound() {
+
+}
+
 
 
 

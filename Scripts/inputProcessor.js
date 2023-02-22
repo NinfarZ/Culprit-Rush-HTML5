@@ -1,11 +1,12 @@
 import { textQueue } from "./uiData.js";
-import { mainButton, continueButton, mapInput, investigationButton } from "./inputManager.js";
-import { GameManager, player } from "./gameManager.js";
+import { mainButton, continueButton, mapInput, investigationButton, culpritSubmitButton, suspectRadioButtons } from "./inputManager.js";
+import { GameManager, player, submitSuspect } from "./gameManager.js";
 import { map } from "./map.js";
 
 mainButton.addEventListener("click", startGame);
 continueButton.addEventListener("click", continueText);
 investigationButton.addEventListener("click", handleInvestigate);
+culpritSubmitButton.addEventListener("click", handleCulpritSubmit);
 
 function continueText() {
     textQueue.updateStoryMessage();
@@ -29,8 +30,17 @@ function handleMapInput(input) {
     map.updateMapLocation(input.id);
 }
 
+function handleCulpritSubmit() {
+    const selectedSuspect = document.querySelector('input[name="suspect"]:checked').value;
+    submitSuspect(selectedSuspect);
+}
+
 export function hideInvestigationButton(setHide) {
     setHide ? investigationButton.style.display = "none" : investigationButton.style.display = "inline";
+}
+
+export function hideSubmitButton(setHide) {
+    setHide ? culpritSubmitButton.style.display = "none" : culpritSubmitButton.style.display = "static";
 }
 
 
@@ -65,11 +75,22 @@ export function disableInvestigateButton(setDisabled) {
     setDisabled ? investigationButton.classList.add("disabled-button") : investigationButton.classList.remove("disabled-button");
 }
 
+export function disableSubmitButton(setDisabled) {
+    culpritSubmitButton.disabled = setDisabled;
+    setDisabled ? culpritSubmitButton.classList.add("disabled-button") : culpritSubmitButton.classList.remove("disabled-button");
+}
+
 export function disableAllButtons(setDisabled) {
     setMapActive(setDisabled);
     disableContinueButton(setDisabled);
 
 
+}
+
+export function removeRadioButtons(charNames) {
+    for (const button of suspectRadioButtons) {
+        if (charNames.includes(button.value)) button.parentElement.remove();
+    }
 }
 
 export function hideContinueButton(setHide) {

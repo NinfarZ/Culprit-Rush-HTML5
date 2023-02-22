@@ -184,11 +184,12 @@ body {
     position: absolute;
     text-align: center;
     margin-top: 2rem;
+    color: var(--neutral-faint);
 }
 
 .map-control__people-inside--names li {
     font-size: .8rem;
-    color: var(--neutral-grey);
+    color: var(--neutral-light);
 }
 
 .map-control__directional-pad {
@@ -196,9 +197,10 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    min-width: 25%;
+    min-width: 30%;
+    aspect-ratio: 16/9;
 
-    aspect-ratio: 16 / 9;
+
 
     margin: 8rem 0 3rem 0;
 }
@@ -206,8 +208,9 @@ body {
 .map-control__directional-pad--button {
     border: var(--map-control__directional-pad--border);
     font-family: var(--font-family);
-    color: var(--neutral-grey);
+    color: var(--secondary);
     font-size: .65rem;
+
 
 }
 
@@ -297,12 +300,13 @@ body {
     background-color: var(--neutral-dark-grey);
     width: 100%;
     justify-content: center;
-    padding: 1em 2em 4em 2em;
+    padding: 1em 2em 0 2em;
 
 }
 
 .map-control__investigation--case-details {
     text-align: center;
+
 }
 
 .map-control__investigation--case-details-list {
@@ -314,10 +318,10 @@ body {
 }
 
 .map-control__investigation--case-details-list li {
-    font-size: .8rem;
-    color: var(--neutral-grey);
+    font-size: .7rem;
+    color: var(--neutral-light);
     margin-top: .5rem;
-    white-space: nowrap;
+
 }
 
 .map-control__investigation--case-details-label {
@@ -351,14 +355,14 @@ body {
 }
 
 .map-control__investigation--suspects div {
-    font-size: .8rem;
-    color: var(--neutral-grey);
+    font-size: .7rem;
+    color: var(--neutral-light);
     display: flex;
     justify-content: space-between;
     border-bottom: solid 1px var(--neutral-faint);
 }
 
-input[type="checkbox"] {
+input[type="radio"] {
     accent-color: var(--primary);
 
 }
@@ -369,10 +373,20 @@ button:hover:not(:disabled) {
 
 
 .victim {
-    color: var(--primary-accent);
+    color: var(--primary);
 }
 
 .disabled-button {
     color: var(--neutral-faint);
     border-color: var(--neutral-faint);
+}
+
+.map-control__investigation--suspects-button {
+
+    font-family: var(--font-family);
+    font-size: .7rem;
+    padding: .2rem;
+    background: none;
+    color: var(--secondary);
+    border: none;
 }
