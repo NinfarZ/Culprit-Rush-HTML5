@@ -28,8 +28,10 @@ export const seenWeapon = (charName, weaponName, locationName, time) => [`${char
 export const alibi = (charName, locationName, peopleInside, time) => [`${charName}: "I was with ${listCharacters(peopleInside)} in the ${locationName} at ${time}."`];
 
 const correctSuspectChosen = (killerName) => [`. . .`, `Good job.`, `The culprit was indeed ${killerName}.`];
+const correctSuspectSuicide = (killerName) => [`. . .`, `Good job.`, `The culprit was indeed ${killerName}.`, `It was suicide.`];
 const wrongSuspectChosen = (guessName, killerName) => [`. . .`, `Good job.`, `But you are wrong...`, `The culprit wasn't ${guessName}.`, `It was ${killerName}.`];
 const wrongSuspectVictim = (guessName, killerName) => [`. . .`, `Hmmm.`, `${guessName} was a victim were they not?`, `Are you saying it was suicide?`, `Well, it wasn't.`, `The culprit was ${killerName}.`];
+const wrongSuspectSuicide = (guessName, killerName) => [`. . .`, `Good job.`, `But you are wrong...`, `The culprit wasn't ${guessName}.`, `The culprit was ${killerName} ${killerName.gender === "M" ? "himself" : "herself"}.`, `It was suicide.`];
 
 const interactionBehaviours = {
     "friendly": [`comforting`, `laughing with`, `telling a joke to`, `hugging`, `complimenting`, `shaking hands with`, `eating a snack with`, `brofisting`],
@@ -120,7 +122,7 @@ function pickRandomPerson(characterList, index = Math.random() * characterList.l
 
 export {
     introText, mapTutorialText, behaviourSolo, behaviourGroup, killingSound, bodyDiscovery,
-    bodyDiscoveryNotOver, bodyInvestigationIntro, endOfDay, wrongSuspectChosen, correctSuspectChosen, wrongSuspectVictim
+    bodyDiscoveryNotOver, bodyInvestigationIntro, endOfDay, wrongSuspectChosen, correctSuspectChosen, wrongSuspectVictim, correctSuspectSuicide, wrongSuspectSuicide
 };
 
 function listCharacters(characterList) {

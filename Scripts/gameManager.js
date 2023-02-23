@@ -71,7 +71,10 @@ export let GameManager = {
             if (!Object.keys(caseDetails).length) char.investigate();
         }
 
-        if (killer.weapon) killer.searchForKill();
+        if (killer.weapon) {
+            killer.searchForKill();
+            if (killer.hasKilled) killer.lie();//investigate again to lie about the time of the crime
+        }
 
         for (const location of Object.values(locations)) {
             const averageMood = getAvgMood(location.whosInside);
@@ -94,10 +97,8 @@ export let GameManager = {
     "bodySearch": function () {
 
         console.log("it's time to look for the body");
-        //characters will move until they find the crime scene
         for (const char of characterList) {
-            if (!victimsFound.length === caseDetails["victim"].length) char.turn()
-
+            char.turn();
         }
 
         if (caseDetails["crimeScene"].includes(player.location)) {
@@ -147,7 +148,7 @@ export function charRoomBehaviour() {
 export function onCharKilled(victimList) {
     GameManager.gameState = "bodySearch";
     caseDetails["victim"] = victimList;
-    caseDetails["timeOfDeath"] = dayManager.getTime();
+    caseDetails["timeOfDeath"] = killer.weapon.isNoisy ? dayManager.getTime() : dayManager.currentPeriod;
     caseDetails["crimeScene"] = victimList.length > 1 ? [victimList[0].location, victimList[1].location] : [victimList[0].location];
     caseDetails["murderWeapon"] = killer.weapon;
 
@@ -204,12 +205,15 @@ export function createPlayer() {
 
 export function submitSuspect(suspect) {
     if (suspect === killer.charName) {
-        textQueue.pushIntoQueue(uiModel.correctSuspectChosen(suspect));
+        if (killer.isAlive) textQueue.pushIntoQueue(uiModel.correctSuspectChosen(suspect));
+        else textQueue.pushIntoQueue(uiModel.correctSuspectSuicide(suspect));
         removeVictimsAndKiller(caseDetails["victim"], killer);
     } else if (caseDetails["victim"].map(victim => victim.charName).includes(suspect)) {
         textQueue.pushIntoQueue(uiModel.wrongSuspectVictim(suspect, killer.charName));
     } else {
-        textQueue.pushIntoQueue(uiModel.wrongSuspectChosen(suspect, killer.charName));
+        if (caseDetails["victim"].map(victim => victim.charName).includes(killer.charName))
+            textQueue.pushIntoQueue(uiModel.wrongSuspectSuicide(suspect, killer.charName))
+        else textQueue.pushIntoQueue(uiModel.wrongSuspectChosen(suspect, killer.charName));
     }
     updateTextDisplay();
 }

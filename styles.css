@@ -46,7 +46,7 @@ video {
     --primary-light: hsl(347, 57%, 68%);
     --primary-accent: hsl(347, 70%, 44%);
     --secondary: hsl(61, 73%, 73%);
-    --secondary-hover: hsla(60, 37%, 80%, 0.288);
+    --secondary-hover: hsla(0, 0%, 19%, 0.288);
 
     --map-control__directional-pad--border: solid 1px var(--neutral-grey);
     --map-control__directional-pad--room-names: var(--neutral-faint);

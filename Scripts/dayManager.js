@@ -8,7 +8,9 @@ export let dayManager = {
     currentDay: 1,
     currentHour: 7,
     currentMinutes: 0,
+    currentPeriod: "Morning",
     timePeriod: "am",
+
     passTheTime: function () {
 
         this.currentMinutes += 30
@@ -34,6 +36,10 @@ export let dayManager = {
     getTime: function () {
         return `${this.currentHour}:${this.currentMinutes === 0 ? "00" : this.currentMinutes} ${this.timePeriod}`
     },
+    getTimeLie: function () {
+        const hoursLie = this.currentHour !== 1 ? this.currentHour - 1 : this.currentHour;
+        return `${hoursLie}:${this.currentMinutes === 0 ? "00" : this.currentMinutes} ${this.timePeriod}`;
+    },
     canDisplayTime() {
         if (["10:00 am", "12:00 pm", "10:00 pm"].includes(this.getTime())) return true;
         return false;
@@ -45,10 +51,13 @@ export let dayManager = {
     getPeriod() {
         switch (this.getTime()) {
             case "7:30 am":
+                this.currentPeriod = "Morning";
                 return "Morning";
             case "12:00 pm":
+                this.currentPeriod = "Afternoon";
                 return "Afternoon";
             case "8:00 pm":
+                this.currentPeriod = "Night";
                 return "Night";
             default:
                 break;

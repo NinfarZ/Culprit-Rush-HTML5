@@ -4,6 +4,7 @@ import { removeWeapon } from "./location.js";
 import { dayManager } from "./dayManager.js";
 import { seenWeapon, alibi, seenCharAdjecentRoom } from "./uiOrganizer.js";
 import { caseDetails } from "./gameManager.js";
+import { textQueue } from "./uiData.js";
 
 
 export default class Killer extends Character {
@@ -44,25 +45,105 @@ export default class Killer extends Character {
     }
 
     investigate() {
-        const whosInsideRoom = [...this.location.whosInside];
-        whosInsideRoom.splice(whosInsideRoom.indexOf(this), 1);
+        const investigationChance = 80;
+
 
         if (this.location.itemsInside[0]) {
-            //if (Math.floor(Math.random() * 100) <= investigationChance) 
-            this.investigationReport[this.location.itemsInside[0].weaponName] = seenWeapon(this.charName, this.location.itemsInside[0].weaponName, this.location.name, dayManager.getTime());
+            if (Math.floor(Math.random() * 100) <= investigationChance)
+                this.investigationReport[this.location.itemsInside[0].weaponName] = seenWeapon(this.charName, this.location.itemsInside[0].weaponName, this.location.name, dayManager.getTimeLie());
             if (!this.weapon) this.weapon = this.findWeapon(this.location.itemsInside);
         }
-        if (whosInsideRoom.length > 1) {
-            //if (Math.floor(Math.random() * 100) <= investigationChance) {
-            this.investigationReport[dayManager.getTime()] = alibi(this.charName, this.location.name, whosInsideRoom, dayManager.getTime());
-            //}
+
+    }
+
+    isAnyoneDead(room) {
+        for (const char of room.whosInside) {
+            if (!char.isAlive) return true;
         }
-        for (const room of Object.values(this.location.adjecentRooms)) {
-            if (!room || !room.isOpen) continue;
-            if (!this.isRoomValid(room)) continue;
-            //if (Math.floor(Math.random() * 100) <= investigationChance)
-            this.investigateAdjecentRooms(room);
+        return false;
+    }
+
+    lie() {
+        const whosInsideRoom = this.location.whosInside.filter(char => char !== this);
+        let investigationChance = 70;
+
+        // if (this.location.itemsInside[0]) {
+        //     if (Math.floor(Math.random() * 100) <= investigationChance)
+        //         this.investigationReport[this.location.itemsInside[0].weaponName] = seenWeapon(this.charName, this.location.itemsInside[0].weaponName, this.location.name, dayManager.getTime());
+        // }
+
+        const possibleRoomsToLie = Object.values(this.location.adjecentRooms).filter(room => room && room.whosInside.length && this.isRoomValid(room) && !this.isAnyoneDead(room) && room.isOpen);
+        if (possibleRoomsToLie.length) {
+            const roomIndex = Math.floor(Math.random() * possibleRoomsToLie.length);
+            const randomAdjecentRoom = possibleRoomsToLie[roomIndex];
+            if (Math.floor(Math.random() * 100) <= investigationChance) {
+                this.investigationReport[dayManager.getTime()] = alibi(this.charName, randomAdjecentRoom.name, randomAdjecentRoom.whosInside, dayManager.getTime());
+                investigationChance -= 10;
+            }
+
         }
+
+
+
+        if (Math.floor(Math.random() * 100) <= investigationChance) {
+            this.investigateAdjecentRooms(this.location, possibleRoomsToLie);
+            investigationChance -= 10;
+        }
+
+
+    }
+
+    investigateAdjecentRooms(room, possibleRoomsToLie) {
+        const whosInsideLie = this.location.whosInside.filter(char => char !== this);
+        if (!whosInsideLie.length) return;
+        if (!possibleRoomsToLie.length) return;
+        let charToFrame = null;
+        for (const room of possibleRoomsToLie) {
+            if (charToFrame) continue;
+            const roomNoPlayer = room.whosInside.filter(char => char !== player);
+            if (roomNoPlayer.length)
+                charToFrame = roomNoPlayer[0];
+
+        }
+        whosInsideLie.push(charToFrame);
+        this.investigationReport[room.name] = seenCharAdjecentRoom(this.charName, whosInsideLie, this.location.name, dayManager.getTime());
+    }
+
+    //the killer will lie on their testimony.
+    testify() {
+        if (!this.isAlive) return;
+
+        let hasNoInfo = true;
+        const victims = caseDetails["victim"];
+        const crimeLocations = caseDetails["crimeScene"].map(location => location.name);
+        const timeOfDeath = caseDetails["timeOfDeath"];
+        const murderWeapon = caseDetails["murderWeapon"].weaponName;
+
+
+        if (timeOfDeath in this.investigationReport) {
+            const time = this.investigationReport[timeOfDeath].slice();
+            textQueue.pushIntoQueue(time);
+            hasNoInfo = false;
+
+        }
+
+        for (const location of crimeLocations) {
+            if (location in this.investigationReport) {
+                const crimeScene = this.investigationReport[location].slice();
+                textQueue.pushIntoQueue(crimeScene);
+                hasNoInfo = false;
+
+            }
+        }
+
+        if (murderWeapon in this.investigationReport) {
+            const weapon = this.investigationReport[murderWeapon].slice();
+            textQueue.pushIntoQueue(weapon);
+            hasNoInfo = false;
+        }
+        if (hasNoInfo) textQueue.pushIntoQueue([`${this.charName}: I saw nothing.`]);
+
+
     }
 
     canSetTarget(averageMood) {
@@ -87,6 +168,10 @@ export default class Killer extends Character {
         return char.location === this.location ? true : false;
     }
 
+    isKillerAlone() {
+        return this.location.whosInside.length > 1 ? false : true;
+    }
+
     lookForTarget(characterList) {
         const possibleTargets = [...characterList];
         possibleTargets.splice(possibleTargets.indexOf(this), 1);
@@ -95,6 +180,7 @@ export default class Killer extends Character {
     }
 
     turn() {
+        if (!this.isAlive) return;
         if (!this.hasKilled) {
             if (Math.floor(Math.random() * 100) < 50) return;
         }
@@ -113,7 +199,20 @@ export default class Killer extends Character {
         if (this.hasKilled) return;
         if (!this.hasKillMood()) return;
 
+
         let victimList = [];
+        const suicideChance = 10;
+        if (this.isKillerAlone()) {
+            if (Math.floor(Math.random() * 100) <= suicideChance) {
+
+                this.weapon.kill(this);
+                victimList.push(this);
+                this.hasKilled = true
+                onCharKilled(victimList)
+                return;
+            }
+        }
+
         const possibleTargets = characterList.filter(char => char !== this && this.weapon.canKill(this, char) && this.isCharWitness);
         console.log(`possible target list is ${possibleTargets}`);
 

@@ -40,24 +40,31 @@ export default class Character {
 
     investigate() {
 
-        const whosInsideRoom = [...this.location.whosInside];
-        whosInsideRoom.splice(whosInsideRoom.indexOf(this), 1);
+        const whosInsideRoom = this.location.whosInside.filter(char => char !== this);
+        let investigationChance = 80;
+
 
         if (this.location.itemsInside[0]) {
-            //if (Math.floor(Math.random() * 100) <= investigationChance)
-            this.investigationReport[this.location.itemsInside[0].weaponName] = seenWeapon(this.charName, this.location.itemsInside[0].weaponName, this.location.name, dayManager.getTime());
-
+            if (Math.floor(Math.random() * 100) <= investigationChance) {
+                this.investigationReport[this.location.itemsInside[0].weaponName] = seenWeapon(this.charName, this.location.itemsInside[0].weaponName, this.location.name, dayManager.getTime());
+                investigationChance -= 10;
+            }
         }
+
         if (whosInsideRoom.length > 1) {
-            //if (Math.floor(Math.random() * 100) <= investigationChance) {
-            this.investigationReport[dayManager.getTime()] = alibi(this.charName, this.location.name, whosInsideRoom, dayManager.getTime());
-            //}
+            if (Math.floor(Math.random() * 100) <= investigationChance) {
+                this.investigationReport[dayManager.getTime()] = alibi(this.charName, this.location.name, whosInsideRoom, dayManager.getTime());
+                investigationChance -= 10;
+            }
+
+
+
         }
         for (const room of Object.values(this.location.adjecentRooms)) {
             if (!room || !room.isOpen) continue;
             if (!this.isRoomValid(room)) continue;
-            //if (Math.floor(Math.random() * 100) <= investigationChance)
-            this.investigateAdjecentRooms(room);
+            if (Math.floor(Math.random() * 100) <= investigationChance)
+                this.investigateAdjecentRooms(room);
 
         }
         console.log(this.investigationReport);
@@ -70,6 +77,12 @@ export default class Character {
         let hasNoInfo = true;
         const victims = caseDetails["victim"];
         const crimeLocations = caseDetails["crimeScene"].map(location => location.name);
+        const reducedCrimeLocations = crimeLocations.reduce((accumulator, currentValue) => {
+            if (!accumulator.includes(currentValue)) {
+                accumulator.push(currentValue);
+            }
+            return accumulator;
+        }, []);
         const timeOfDeath = caseDetails["timeOfDeath"];
         const murderWeapon = caseDetails["murderWeapon"].weaponName;
 
@@ -81,7 +94,7 @@ export default class Character {
 
         }
 
-        for (const location of crimeLocations) {
+        for (const location of reducedCrimeLocations) {
             if (location in this.investigationReport) {
                 const crimeScene = this.investigationReport[location].slice();
                 textQueue.pushIntoQueue(crimeScene);
@@ -95,13 +108,19 @@ export default class Character {
             textQueue.pushIntoQueue(weapon);
             hasNoInfo = false;
         }
-        if (hasNoInfo) textQueue.pushIntoQueue([`${this.charName}: I saw nothing.`]);
+
+        if (victims)
+            if (hasNoInfo) textQueue.pushIntoQueue([`${this.charName}: I saw nothing.`]);
 
 
     }
 
     investigateAdjecentRooms(room) {
         this.investigationReport[room.name] = seenCharAdjecentRoom(this.charName, room.whosInside, room.name, dayManager.getTime());
+        for (const char of room.whosInside) {
+            this.investigationReport[char.charName] = seenCharAdjecentRoom(this.charName, room.whosInside, room.name, dayManager.getTime());
+        }
+
     }
 
     isRoomValid(room) {
