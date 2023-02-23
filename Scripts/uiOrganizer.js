@@ -12,7 +12,7 @@ const mapTutorialText = () => [`Use the map interface below to move around.`,
 const killingSound = (bodyLocation) => [`A loud violent noise echoed through the building.`, `You should check the ${bodyLocation.name}...`];
 const bodyDiscovery = (bodyLocation, victimList) => [`You step into the ${bodyLocation.name}. There, laying cold on the floor, you see ${listCharacters(victimList)}.`];
 const bodyDiscoveryNotOver = (bodyLocation) => [`And that's not all. You should check the ${bodyLocation.name}...`];
-const bodyInvestigationIntro = (victimList) => [`It has happened.`, `Now begins the moment of truth.`, `You have 1 day to unveil the culprit.`, `If you don't, it's game over.`, `Who killed ${listCharacters(victimList)}?`, `Talk to the others.`, `Listen to their testemonies and reach the truth.`, `Submit your answer bellow on who did it.`, `You only have ONE chance.`]
+const bodyInvestigationIntro = (victimList) => [`It has happened.`, `Now begins the moment of truth.`, `Unveil the culprit.`, `If you get it wrong, it's game over.`, `Who killed ${listCharacters(victimList)}?`, `Investigate.`, `Listen to people's testemonies and reach the truth.`, `But beware.`, `The killer will LIE.`]
 const endOfDay = (day) => [`End of day ${day}. Everyone went back to their rooms for the night.`];
 
 const behaviourSolo = (peopleInside) => [`${pickRandomPerson(peopleInside).charName}'s ${pickLocationBehaviour()} while ${pickSoloMoodBehaviour(peopleInside[0])}.`];

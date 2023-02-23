@@ -2,7 +2,7 @@
 let weaponClassObj = {
     melee: {
         className: "MELEE",
-        classRules: "The culprit must've bee in the SAME ROOM as the victim.",
+        classRules: "The culprit must've been in the SAME ROOM as the victim.",
         canKill(killer, victim) {
             return killer.location === victim.location ? true : false;
         }
