@@ -31,8 +31,9 @@ function handleMapInput(input) {
 }
 
 function handleCulpritSubmit() {
-    const selectedSuspect = document.querySelector('input[name="suspect"]:checked').value;
-    submitSuspect(selectedSuspect);
+    const selectedSuspect = document.querySelectorAll('input[name="suspect"]:checked');
+    if (selectedSuspect.length > 1) return;
+    submitSuspect(selectedSuspect[0].value);
 }
 
 export function hideInvestigationButton(setHide) {

@@ -45,7 +45,7 @@ video {
     --primary: hsl(347, 57%, 58%);
     --primary-light: hsl(347, 57%, 68%);
     --primary-accent: hsl(347, 70%, 44%);
-    --secondary: hsl(61, 73%, 73%);
+    --secondary: #ebec88;
     --secondary-hover: hsla(0, 0%, 19%, 0.288);
 
     --map-control__directional-pad--border: solid 1px var(--neutral-grey);
@@ -61,16 +61,51 @@ body {
     font-family: 'Press Start 2P', cursive;
     background-color: var(--neutral-dark-grey);
     color: var(--neutral-light);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
 }
 
 .wrapper {
+    position: relative;
     display: flex;
     flex-direction: column;
+    isolation: isolate;
 
     align-items: center;
     background-color: var(--neutral-dark-grey);
 
+}
+
+.wrapper::before {
+    position: absolute;
+    content: '';
+
+
+    box-shadow: 0 1px 2px 0 var(--primary);
+
+
+
+    inset: 0;
+    transform: rotate(-20deg) translateY(50%);
+
+    z-index: -1;
+
+}
+
+.wrapper::after {
+    position: absolute;
+    content: '';
+
+
+    box-shadow: 0 1px 2px 0 var(--primary);
+
+
+    inset: 0;
+    transform: rotate(20deg) translateY(50%);
+
+    z-index: -1;
 
 }
 
@@ -169,21 +204,54 @@ body {
 
 
 .map-control {
+
     position: relative;
     display: flex;
     align-items: center;
     flex-direction: column;
     border-top: double 1px var(--neutral-faint);
 
-    margin: 2rem 0 2rem 0;
+    box-shadow: inset 0 15px 50px -40px var(--primary),
+        inset 0 -40px 50px -40px var(--primary);
+
+    overflow: hidden;
+    margin: 2rem 0 0 0;
     background-color: var(--neutral-dark);
 
+}
+
+.map-control::before {
+    position: absolute;
+    content: '';
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 70%;
+    transform: rotate(5deg) translateY(85%);
+
+
+
+    background-color: var(--neutral-dark-grey);
+}
+
+.map-control::after {
+    position: absolute;
+    content: '';
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 70%;
+    transform: rotate(-5deg) translateY(85%);
+
+
+
+    background-color: var(--neutral-dark-grey);
 }
 
 .map-control__people-inside {
     position: absolute;
     text-align: center;
-    margin-top: 2rem;
+    margin-top: 1rem;
     color: var(--neutral-faint);
 }
 
@@ -191,6 +259,17 @@ body {
     font-size: .8rem;
     color: var(--neutral-light);
 }
+
+.map-control__people-inside--names li:nth-of-type(1) {
+    rotate: 5deg;
+}
+
+.map-control__people-inside--names li:nth-of-type(2) {}
+
+.map-control__people-inside--names li:nth-of-type(3) {
+    rotate: -5deg;
+}
+
 
 .map-control__directional-pad {
 
@@ -296,7 +375,6 @@ body {
     display: flex;
     gap: 3rem;
 
-    border-top: 1px solid var(--neutral-faint);
     background-color: var(--neutral-dark-grey);
     width: 100%;
     justify-content: center;
@@ -346,23 +424,34 @@ body {
     flex-direction: column;
 
     row-gap: .5rem;
+    transform: translateY(-17%);
+    perspective: 100px;
 }
 
 .map-control__investigation--suspects-label {
     border-bottom: solid 1px var(--primary);
     color: var(--primary-light);
+    transform: skewY(5deg);
+
 
 }
 
 .map-control__investigation--suspects div {
-    font-size: .7rem;
+    font-size: 1rem;
     color: var(--neutral-light);
     display: flex;
     justify-content: space-between;
     border-bottom: solid 1px var(--neutral-faint);
+    transform: skewY(5deg);
+
 }
 
-input[type="radio"] {
+.map-control__investigation--suspects div:hover {
+    background-color: var(--primary);
+}
+
+
+input[type="checkbox"] {
     accent-color: var(--primary);
 
 }
@@ -389,4 +478,10 @@ button:hover:not(:disabled) {
     background: none;
     color: var(--secondary);
     border: none;
+}
+
+.mood-img {
+    display: inline-block;
+    margin-right: .5rem;
+
 }

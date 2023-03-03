@@ -23,7 +23,7 @@ export default class Player extends Character {
         }
         else {
             if (this.isAnyoneDead()) {
-                textQueue.pushIntoQueue(playerBodyInvestigation(caseDetails["murderWeapon"], caseDetails["timeOfDeath"]));
+                textQueue.pushIntoQueue(playerBodyInvestigation(caseDetails["murderWeapon"], caseDetails["timeOfDeathDisplay"]));
                 textQueue.pushIntoQueue([caseDetails["murderWeapon"].weaponClass.classRules]);
                 if (!caseDetailsUpdated) this.updateCaseDetailsDisplay();
             }
@@ -36,7 +36,7 @@ export default class Player extends Character {
     updateCaseDetailsDisplay() {
         const victim = caseDetails["victim"].map(char => char.charName);
         const location = caseDetails["crimeScene"].map(location => location.name);
-        const timeOfDeath = caseDetails["timeOfDeath"];
+        const timeOfDeath = caseDetails["timeOfDeathDisplay"];
         const murderWeapon = caseDetails["murderWeapon"].weaponName;
 
         const details = ["Victim(s): " + victim, "Location(s): " + location, "Time: " + timeOfDeath, "Weapon: " + murderWeapon];

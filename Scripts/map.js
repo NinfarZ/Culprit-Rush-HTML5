@@ -38,8 +38,21 @@ export let map = {
         for (const char of player.location.whosInside) {
             if (char !== player) {
                 const li = document.createElement("LI");
-                char.isAlive ? li.style.color = "white" : li.style.color = "red";
-                li.innerHTML = char.charName;
+                const span = document.createElement("SPAN");
+                const moodImg = document.createElement("IMG");
+                moodImg.src = `img/${char.getCharMood()}.png`;
+                moodImg.classList.add("mood-img");
+
+                span.innerHTML = char.charName;
+
+                if (char.isAlive) {
+                    li.style.color = "white";
+                    li.append(moodImg, span);
+                } else {
+                    li.style.color = "red";
+                    li.append(span);
+                }
+
                 whosThere.append(li);
             }
 
@@ -78,6 +91,7 @@ export let map = {
             case ("murderInvestigation"):
                 if (player.location.whosInside.length > 1) hideInvestigationButton(false);
                 else hideInvestigationButton(true);
+                break;
         }
 
     },

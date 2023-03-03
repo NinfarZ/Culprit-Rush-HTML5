@@ -23,15 +23,17 @@ export const playerWeaponMissing = (item, location) => [`Uh Oh. The ${item} is m
 export const playerBodyInvestigation = (murderWeapon, timeOfDeath) => [`The victim was killed around ${timeOfDeath}. The murder weapon was a ${murderWeapon.weaponName}.`];
 
 //character intel. Info is taken out of each char investigation reports
-export const seenCharAdjecentRoom = (charName, peopleInside, locationName, time) => [`${charName}: "I saw ${listCharacters(peopleInside)} walking into the ${locationName} at ${time}."`];
-export const seenWeapon = (charName, weaponName, locationName, time) => [`${charName}: "I saw a ${weaponName} in the ${locationName} at ${time}."`];
+export const seenCharAdjecentRoom = (charName, peopleInside, locationName, time) => [`${charName}: "I saw ${listCharacters(peopleInside)} in the ${locationName} at ${time}."`];
+export const seenWeapon = (charName, weaponName, locationName, day, time) => [`${charName}: "I saw a ${weaponName} in the ${locationName} on day ${day} at ${time}."`];
+export const weaponMissing = (charName, weaponName, locationName, day, time) => [`${charName}: "The ${weaponName} was missing from the ${locationName} on day ${day} at ${time}."`];
 export const alibi = (charName, locationName, peopleInside, time) => [`${charName}: "I was with ${listCharacters(peopleInside)} in the ${locationName} at ${time}."`];
+export const alibiSolo = (charName, locationName, time) => [`${charName}: "I was by myself in the ${locationName} at ${time}."`];
 
 const correctSuspectChosen = (killerName) => [`. . .`, `Good job.`, `The culprit was indeed ${killerName}.`];
-const correctSuspectSuicide = (killerName) => [`. . .`, `Good job.`, `The culprit was indeed ${killerName}.`, `It was suicide.`];
+const correctSuspectSuicide = (killerName) => [`. . .`, `Interesting.`, `${killerName} was a victim were they not?`, `Are you saying it was suicide?`, `Well, you're absolutely right.`, `The culprit was ${killerName} ${killer.gender === "M" ? "himself" : "herself"}.`];
 const wrongSuspectChosen = (guessName, killerName) => [`. . .`, `Good job.`, `But you are wrong...`, `The culprit wasn't ${guessName}.`, `It was ${killerName}.`];
-const wrongSuspectVictim = (guessName, killerName) => [`. . .`, `Hmmm.`, `${guessName} was a victim were they not?`, `Are you saying it was suicide?`, `Well, it wasn't.`, `The culprit was ${killerName}.`];
-const wrongSuspectSuicide = (guessName, killerName) => [`. . .`, `Good job.`, `But you are wrong...`, `The culprit wasn't ${guessName}.`, `The culprit was ${killerName} ${killerName.gender === "M" ? "himself" : "herself"}.`, `It was suicide.`];
+const wrongSuspectVictim = (guessName, killerName) => [`. . .`, `Interesting.`, `${guessName} was a victim were they not?`, `Are you saying it was suicide?`, `Well, it wasn't.`, `The culprit was ${killerName}.`];
+const wrongSuspectSuicide = (guessName, killerName) => [`. . .`, `Good job.`, `But you are wrong...`, `The culprit wasn't ${guessName}.`, `The culprit was ${killerName} ${killer.gender === "M" ? "himself" : "herself"}.`, `It was suicide.`];
 
 const interactionBehaviours = {
     "friendly": [`comforting`, `laughing with`, `telling a joke to`, `hugging`, `complimenting`, `shaking hands with`, `eating a snack with`, `brofisting`],
@@ -57,7 +59,7 @@ const locationBehaviours = {
 }
 
 function pickSoloMoodBehaviour(peopleInside) {
-    const charMood = getCharMood(peopleInside);
+    const charMood = peopleInside.getCharMood();
     const behaviour = soloBehaviours[charMood][Math.floor(Math.random() * soloBehaviours[charMood].length)];
 
     return behaviour;
@@ -68,17 +70,18 @@ function pickGroupMoodBehaviour(group) {
 
     const speaker = people[0];
     const listener = people[1];
-    const speakerMood = getCharMood(speaker);
-    const listenerMood = getCharMood(listener);
+    const speakerMood = speaker.getCharMood();
+    const listenerMood = listener.getCharMood();
     const speakerGender = speaker.gender == "F" ? "her" : "him";
     const listenerGender = listener.gender == "F" ? "she" : "he";
     const behaviourSpeaker = interactionBehaviours[speakerMood][Math.floor(Math.random() * interactionBehaviours[speakerMood].length)];
     if (speakerMood === listenerMood) {
-        const behaviourListener = interactionBehaviours[listenerMood][Math.floor(Math.random() * interactionBehaviours[listenerMood].length)];
-        return `${speaker.charName}'s ${pickLocationBehaviour()} and ${behaviourSpeaker} ${listener.charName}.`;
+        const possibleBehaviours = interactionBehaviours[listenerMood].filter(behaviour => behaviour !== behaviourSpeaker);
+        const behaviourListener = possibleBehaviours[Math.floor(Math.random() * possibleBehaviours.length)];
+        return `${speaker.charName}'s ${pickLocationBehaviour()} and ${behaviourSpeaker} ${listener.charName}, while the latter's ${behaviourListener} ${speakerGender}.`;
     } else {
         const behaviourListener = soloBehaviours[listenerMood][Math.floor(Math.random() * soloBehaviours[listenerMood].length)];
-        return `${speaker.charName}'s ${pickLocationBehaviour()} and ${behaviourSpeaker} ${listener.charName}.`;
+        return `${speaker.charName}'s ${pickLocationBehaviour()} and ${behaviourSpeaker} ${listener.charName}, while the latter's ${behaviourListener}.`;
     }
 
 

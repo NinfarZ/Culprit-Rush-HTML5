@@ -43,7 +43,7 @@ export let GameManager = {
         for (const char of characterList) {
             char.randomizeLocation();
             char.startMood();
-            console.log(`${char.charName}'s mood is ${char.moodLevel}`)
+
         }
         map.setIsActive(false);
         hideWeapons()
@@ -61,28 +61,33 @@ export let GameManager = {
     "turn": function () {
 
 
-        //first every character moves rooms and only then investigate
+        //first every character moves to a random adjacent room
         for (const char of characterList) {
             char.turn()
         }
 
+        //then the killer will investigate the room, followed by the innocent characters
         if (!Object.keys(caseDetails).length) killer.investigate();
         for (const char of characterList.filter(char => char !== killer)) {
             if (!Object.keys(caseDetails).length) char.investigate();
         }
 
-        if (killer.weapon) {
-            killer.searchForKill();
-            if (killer.hasKilled) killer.lie();//investigate again to lie about the time of the crime
-        }
-
+        //the mood of each character will change depending on the average mood of those around them
         for (const location of Object.values(locations)) {
             const averageMood = getAvgMood(location.whosInside);
             updateGroupMood(averageMood, location.whosInside);
         }
 
+        //if someone's in the room with them player, they'll display behaviour according to their mood
         if (player.location.whosInside.length >= 1) charRoomBehaviour();
 
+        //if the killer found the weapon during their investigation, they'll attempt an attack
+        if (killer.weapon) {
+            killer.searchForKill();
+            if (killer.hasKilled) killer.lie(); //the killer will investigate again and fabricate a lie about their crime
+        }
+
+        //if a murder occured and the weapon is noisy, a message will be displayed
         if (Object.keys(caseDetails).length !== 0) {
             if (caseDetails["murderWeapon"].isNoisy) {
                 textQueue.pushIntoQueue(uiModel.killingSound(caseDetails["victim"][0].location));
@@ -90,15 +95,21 @@ export let GameManager = {
             }
         }
 
+        //called each turn to display text on the screen
         updateTextDisplay();
 
     },
 
     "bodySearch": function () {
 
-        console.log("it's time to look for the body");
+
         for (const char of characterList) {
             char.turn();
+        }
+
+        for (const location of Object.values(locations)) {
+            const averageMood = getAvgMood(location.whosInside);
+            updateGroupMood(averageMood, location.whosInside);
         }
 
         if (caseDetails["crimeScene"].includes(player.location)) {
@@ -148,8 +159,9 @@ export function charRoomBehaviour() {
 export function onCharKilled(victimList) {
     GameManager.gameState = "bodySearch";
     caseDetails["victim"] = victimList;
-    caseDetails["timeOfDeath"] = killer.weapon.isNoisy ? dayManager.getTime() : dayManager.currentPeriod;
-    caseDetails["crimeScene"] = victimList.length > 1 ? [victimList[0].location, victimList[1].location] : [victimList[0].location];
+    caseDetails["timeOfDeath"] = dayManager.getTime();
+    caseDetails["timeOfDeathDisplay"] = killer.weapon.isNoisy ? dayManager.getTime() : dayManager.currentPeriod;
+    caseDetails["crimeScene"] = victimList.length === 2 ? [victimList[0].location, victimList[1].location] : [victimList[0].location];
     caseDetails["murderWeapon"] = killer.weapon;
 
 }
@@ -172,7 +184,7 @@ function getAvgMood(characterList) {
     let moodSum = 0;
     let totalPeople = characterList.length;
     for (const person of characterList) {
-        moodSum += person.moodLevel;
+        if (person.isAlive) moodSum += person.moodLevel;
     }
 
     return moodSum / totalPeople;
@@ -208,8 +220,10 @@ export function submitSuspect(suspect) {
         if (killer.isAlive) textQueue.pushIntoQueue(uiModel.correctSuspectChosen(suspect));
         else textQueue.pushIntoQueue(uiModel.correctSuspectSuicide(suspect));
         removeVictimsAndKiller(caseDetails["victim"], killer);
+
     } else if (caseDetails["victim"].map(victim => victim.charName).includes(suspect)) {
         textQueue.pushIntoQueue(uiModel.wrongSuspectVictim(suspect, killer.charName));
+
     } else {
         if (caseDetails["victim"].map(victim => victim.charName).includes(killer.charName))
             textQueue.pushIntoQueue(uiModel.wrongSuspectSuicide(suspect, killer.charName))
@@ -229,9 +243,7 @@ function removeVictimsAndKiller(victimList, killer) {
 
 }
 
-function newRound() {
 
-}
 
 
 

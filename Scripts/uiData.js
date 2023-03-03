@@ -16,7 +16,6 @@ class UiArray {
 
     displayText() {
         if (this.isArrayEmpty()) return;
-        console.log(this.textArray);
         typeOut(this.textArray.shift())
 
     }
@@ -33,8 +32,9 @@ class TextQueue {
     }
 
     pushIntoQueue(text) {
-        this.queue.push(convertToUiArray(text));
-        console.log(this.queue);
+        const newText = convertToUiArray(text);
+        this.queue.push(newText);
+
     }
 
 
