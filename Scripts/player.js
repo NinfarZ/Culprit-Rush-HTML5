@@ -8,6 +8,7 @@ import { hideInvestigationButton } from "./inputProcessor.js";
 
 const caseDetailsList = document.querySelector(".map-control__investigation--case-details-list");
 const caseDetailsDisplay = document.querySelector(".map-control__investigation--case-details");
+const investigationUi = document.querySelector(".map-control__investigation");
 let caseDetailsUpdated = false;
 
 export default class Player extends Character {
@@ -46,7 +47,8 @@ export default class Player extends Character {
             li.innerHTML = detail;
             caseDetailsList.append(li);
         }
-        caseDetailsDisplay.display = "static";
+        investigationUi.style.display = "flex";
+        caseDetailsDisplay.style.display = "flex";
         caseDetailsUpdated = true;
     }
 

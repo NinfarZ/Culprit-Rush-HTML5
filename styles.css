@@ -61,9 +61,9 @@ body {
     font-family: 'Press Start 2P', cursive;
     background-color: var(--neutral-dark-grey);
     color: var(--neutral-light);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+
 
 }
 
@@ -145,7 +145,7 @@ body {
 .display__text {
     position: absolute;
     top: 30%;
-    margin: 0 1rem 0 1rem;
+    padding: 0 1rem 0 1rem;
     font-size: .8rem;
     text-align: start;
 
@@ -180,6 +180,7 @@ body {
 .map-control__directional-pad--continue {
     display: none;
     font-family: var(--font-family);
+
     font-size: 2rem;
     grid-column: 3;
     grid-row: 1;
@@ -215,7 +216,7 @@ body {
         inset 0 -40px 50px -40px var(--primary);
 
     overflow: hidden;
-    margin: 2rem 0 0 0;
+    padding: 2rem 0 0 0;
     background-color: var(--neutral-dark);
 
 }
@@ -289,6 +290,7 @@ body {
     font-family: var(--font-family);
     color: var(--secondary);
     font-size: .65rem;
+
 
 
 }
@@ -372,7 +374,7 @@ body {
 }
 
 .map-control__investigation {
-    display: flex;
+    display: none;
     gap: 3rem;
 
     background-color: var(--neutral-dark-grey);
