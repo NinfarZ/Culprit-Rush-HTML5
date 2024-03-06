@@ -27,87 +27,89 @@
 </head>
 
 <body>
-    <div class="wrapper">
-        <section class="display">
-            <div class="display__time"><span class="display__time--day">Day 1</span> <span
-                    class="display__time--hours">7:00 am</span><span class="display__time--period">Morning</span>
+    <div class="gameWrapper">
+        <div class="wrapper">
+            <section class="display">
+                <div class="display__time"><span class="display__time--day">Day 1</span> <span
+                        class="display__time--hours">7:00 am</span><span class="display__time--period">Morning</span>
+                </div>
+
+                <p class="display__text">
+
+                </p>
+
+            </section>
+        </div>
+
+
+
+
+        <section class="map-control">
+            <div class="map-control__directional-pad">
+                <button class="map-control__directional-pad--start-button">Start</button>
+                <button class="map-control__directional-pad--investigate">&#x1F50E;&#xFE0E;</button>
+                <button class="map-control__directional-pad--continue">OK</button>
+                <button id="left" class="map-control__directional-pad--button map-control__directional-pad--left"><span
+                        class="map-control__directional-pad--icon"></span></button>
+                <button id="right" class="map-control__directional-pad--button map-control__directional-pad--right"><span
+                        class="map-control__directional-pad--icon"></span></button>
+                <button id="forward"
+                    class="map-control__directional-pad--button map-control__directional-pad--forward"><span
+                        class="map-control__directional-pad--icon"></span></button>
+                <button id="back" class="map-control__directional-pad--button map-control__directional-pad--back"><span
+                        class="map-control__directional-pad--icon"></span></button>
+                <p id="location" class="map-control__directional-pad--location"></p>
             </div>
-
-            <p class="display__text">
-
-            </p>
-
         </section>
-    </div>
+        <div class="map-control__investigation">
+            <div class="map-control__investigation--suspects">
+                <p class="map-control__investigation--suspects-label">SUSPECT:</p>
 
+                <div>
+                    <label class='map-control__investigation--suspects-label-name' for="laela">Laela</label>
+                    <input type="checkbox" name="suspect" id="laela" value="Laela">
+                </div>
 
+                <div>
+                    <label class='map-control__investigation--suspects-label-name' for="james">James</label>
+                    <input type="checkbox" name="suspect" id="james" value="James">
+                </div>
 
+                <div>
+                    <label class='map-control__investigation--suspects-label-name' for="vanessa">Vanessa</label>
+                    <input type="checkbox" name="suspect" id="vanessa" value="Vanessa">
+                </div>
 
-    <section class="map-control">
-        <div class="map-control__people-inside">
-            <p class="map-control__people-inside--label">Who's there?</p>
-            <ul class="map-control__people-inside--names"></ul>
+                <div>
+                    <label class='map-control__investigation--suspects-label-name' for="steve">Steve</label>
+                    <input type="checkbox" name="suspect" id="steve" value="Steve">
+                </div>
 
+                <div>
+                    <label class='map-control__investigation--suspects-label-name' for="wanda">Wanda</label>
+                    <input type="checkbox" name="suspect" id="wanda" value="Wanda">
+                </div>
+
+                <div>
+                    <label for="makoto" class='map-control__investigation--suspects-label-name'>Makoto</label>
+                        <input type="checkbox" name="suspect" id="makoto" value="Makoto">
+                                    </div>
+                <button class="map-control__investigation--suspects-button">Submit Answer</button>
+            </div>
+            <div class="map-control__people-inside">
+                <p class="map-control__people-inside--label">Who's there?</p>
+                <ul class="map-control__people-inside--names"></ul>
+
+            </div>
+
+            <div class="map-control__investigation--case-details">
+                <p class="map-control__investigation--case-details-label">:CASE</p>
+                <ul class="map-control__investigation--case-details-list">
+
+                </ul>
+            </div>
         </div>
-        <div class="map-control__directional-pad">
-            <button class="map-control__directional-pad--start-button">Start</button>
-            <button class="map-control__directional-pad--investigate">&#x1F50E;&#xFE0E;</button>
-            <button class="map-control__directional-pad--continue">OK</button>
-            <button id="left" class="map-control__directional-pad--button map-control__directional-pad--left"><span
-                    class="map-control__directional-pad--icon"></span></button>
-            <button id="right" class="map-control__directional-pad--button map-control__directional-pad--right"><span
-                    class="map-control__directional-pad--icon"></span></button>
-            <button id="forward"
-                class="map-control__directional-pad--button map-control__directional-pad--forward"><span
-                    class="map-control__directional-pad--icon"></span></button>
-            <button id="back" class="map-control__directional-pad--button map-control__directional-pad--back"><span
-                    class="map-control__directional-pad--icon"></span></button>
-            <p id="location" class="map-control__directional-pad--location"></p>
-        </div>
-    </section>
-    <div class="map-control__investigation">
-        <div class="map-control__investigation--suspects">
-            <p class="map-control__investigation--suspects-label">SUSPECT:</p>
-
-            <div>
-                <label for="laela">Laela</label>
-                <input type="checkbox" name="suspect" id="laela" value="Laela">
-            </div>
-
-            <div>
-                <label for="james">James</label>
-                <input type="checkbox" name="suspect" id="james" value="James">
-            </div>
-
-            <div>
-                <label for="vanessa">Vanessa</label>
-                <input type="checkbox" name="suspect" id="vanessa" value="Vanessa">
-            </div>
-
-            <div>
-                <label for="steve">Steve</label>
-                <input type="checkbox" name="suspect" id="steve" value="Steve">
-            </div>
-
-            <div>
-                <label for="wanda">Wanda</label>
-                <input type="checkbox" name="suspect" id="wanda" value="Wanda">
-            </div>
-
-            <div>
-                <label for="makoto">Makoto</label>
-                <input type="checkbox" name="suspect" id="makoto" value="Makoto">
-            </div>
-            <button class="map-control__investigation--suspects-button">Submit Answer</button>
-        </div>
-
-        <div class="map-control__investigation--case-details">
-            <p class="map-control__investigation--case-details-label">CASE:</p>
-            <ul class="map-control__investigation--case-details-list">
-
-            </ul>
-        </div>
-    </div>
+</div>
 
 
 </body>

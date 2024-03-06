@@ -24,7 +24,10 @@ html {
 /* min body height */
 
 body {
-    min-height: 100vh;
+    
+    overflow: hidden;
+    background-color: var(--neutral-dark-grey);
+
 }
 
 /* responsive images/videos */
@@ -48,7 +51,7 @@ video {
     --secondary: #ebec88;
     --secondary-hover: hsla(0, 0%, 19%, 0.288);
 
-    --map-control__directional-pad--border: solid 1px var(--neutral-grey);
+    --map-control__directional-pad--border: dotted 1px var(--neutral-grey);
     --map-control__directional-pad--room-names: var(--neutral-faint);
 
     --font-family: 'Press Start 2P', cursive;
@@ -59,11 +62,53 @@ video {
 body {
 
     font-family: 'Press Start 2P', cursive;
-    background-color: var(--neutral-dark-grey);
+  
     color: var(--neutral-light);
+    
+   
+  
+   
+
+}
+
+.gameWrapper {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    position: relative;
+    height: 100vh;
+    
+    
+}
+.gameWrapper::before {
+    position: absolute;
+    content: '';
+    box-shadow: 0 1px 10px 0 var(--primary);
+    
+    
+    inset: 0;
+    transform: rotate(140deg) translateY(50%);
+    scale: 1.2;
+    pointer-events: none;
+    
+  
+    z-index: 1;
+
+}
+
+.gameWrapper::after {
+    position: absolute;
+    content: '';
+
+
+    box-shadow: 0 1px 10px 0 var(--primary);
+    pointer-events: none;
+    
+    
+    inset: 0;
+    transform: rotate(-140deg) translateY(50%);
+    scale: 1.2;
+
+    z-index: 0;
 
 }
 
@@ -75,39 +120,11 @@ body {
 
     align-items: center;
     background-color: var(--neutral-dark-grey);
+    flex: 1;
 
 }
 
-.wrapper::before {
-    position: absolute;
-    content: '';
 
-
-    box-shadow: 0 1px 2px 0 var(--primary);
-
-
-
-    inset: 0;
-    transform: rotate(-20deg) translateY(50%);
-
-    z-index: -1;
-
-}
-
-.wrapper::after {
-    position: absolute;
-    content: '';
-
-
-    box-shadow: 0 1px 2px 0 var(--primary);
-
-
-    inset: 0;
-    transform: rotate(20deg) translateY(50%);
-
-    z-index: -1;
-
-}
 
 
 .display {
@@ -130,6 +147,7 @@ body {
     justify-content: center;
     margin-top: .5rem;
     border-bottom: solid 1px var(--primary);
+    
     color: var(--primary-light);
 
     margin-bottom: 7rem;
@@ -183,7 +201,7 @@ body {
     font-size: 2rem;
     grid-column: 3;
     grid-row: 1;
-    border: 1px dashed var(--neutral-faint);
+    border: 1px dotted var(--neutral-faint);
     border-top: none;
     border-right: none;
     background: none;
@@ -208,51 +226,33 @@ body {
     position: relative;
     display: flex;
     align-items: center;
+    justify-content: center;
     flex-direction: column;
     border-top: double 1px var(--neutral-faint);
+    
 
     box-shadow: inset 0 15px 50px -40px var(--primary),
         inset 0 -40px 50px -40px var(--primary);
 
-    overflow: hidden;
+   
     margin: 2rem 0 0 0;
     background-color: var(--neutral-dark);
+    z-index: 1;
+    flex: 2;
 
 }
 
-.map-control::before {
-    position: absolute;
-    content: '';
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: 70%;
-    transform: rotate(5deg) translateY(85%);
 
-
-
-    background-color: var(--neutral-dark-grey);
-}
-
-.map-control::after {
-    position: absolute;
-    content: '';
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: 70%;
-    transform: rotate(-5deg) translateY(85%);
-
-
-
-    background-color: var(--neutral-dark-grey);
-}
 
 .map-control__people-inside {
-    position: absolute;
+    flex: 1;
     text-align: center;
     margin-top: 1rem;
     color: var(--neutral-faint);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    
 }
 
 .map-control__people-inside--names li {
@@ -276,12 +276,18 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    min-width: 30%;
+    width: 30rem;
+    height: auto;
     aspect-ratio: 16/9;
+    opacity: 80%;
+    
 
-
-
-    margin: 8rem 0 3rem 0;
+    button:hover:not(:disabled) {
+        background: rgb(255,255,255);
+    background: radial-gradient(circle, rgba(255,255,255,0.10527538652179624) 0%, rgba(52,52,52,0) 49%);
+    letter-spacing: 0.1rem;
+    }
+    
 }
 
 .map-control__directional-pad--button {
@@ -294,28 +300,28 @@ body {
 }
 
 .map-control__directional-pad--left {
-    background-color: var(--neutral-dark);
+    background: none;
     border: var(--map-control__directional-pad--border);
     border-left: none;
     border-right: none;
 }
 
 .map-control__directional-pad--right {
-    background-color: var(--neutral-dark);
+    background: none;
     border: var(--map-control__directional-pad--border);
     border-left: none;
     border-right: none;
 }
 
 .map-control__directional-pad--forward {
-    background-color: var(--neutral-dark);
+    background: none;
     border: var(--map-control__directional-pad--border);
     border-top: none;
     border-bottom: none;
 }
 
 .map-control__directional-pad--back {
-    background-color: var(--neutral-dark);
+    background: none;
     border: var(--map-control__directional-pad--border);
     border-top: none;
     border-bottom: none;
@@ -374,16 +380,25 @@ body {
 .map-control__investigation {
     display: flex;
     gap: 3rem;
-
+  
     background-color: var(--neutral-dark-grey);
-    width: 100%;
-    justify-content: center;
-    padding: 1em 2em 0 2em;
+    box-shadow: inset 0 15px 50px -40px var(--neutral-light),
+        inset 0 -60px 50px -80px var(--neutral-light);
+    
+    
+    padding: 1rem 2rem 0 ;
+    flex: 1;
 
 }
 
 .map-control__investigation--case-details {
-    text-align: center;
+    text-align: end;
+    flex: 1;
+    flex-direction: column;
+    row-gap: .5rem;
+    transform: translateY(-17%);
+    perspective: 100px;
+    z-index: 15;
 
 }
 
@@ -396,15 +411,16 @@ body {
 }
 
 .map-control__investigation--case-details-list li {
-    font-size: .7rem;
+    font-size: 1rem;
     color: var(--neutral-light);
     margin-top: .5rem;
 
 }
 
 .map-control__investigation--case-details-label {
-    border-bottom: solid 1px var(--primary);
     color: var(--primary-light);
+    transform: skewY(-5deg);
+    font-size: x-large;
 
 }
 
@@ -414,7 +430,8 @@ body {
     white-space: nowrap;
     align-items: center;
     justify-content: center;
-    border-color: var(--neutral-faint);
+    
+    
 
 
 }
@@ -422,18 +439,54 @@ body {
 .map-control__investigation--suspects {
     display: flex;
     flex-direction: column;
-
+    flex: 1;
     row-gap: .5rem;
     transform: translateY(-17%);
     perspective: 100px;
+    z-index: 15;
+    
+    
+    
+
+    div {
+        
+        label {
+            transition: all 0.1s;
+        }
+
+       
+    }
+
+    div:has(:checked) {
+        
+        background-color: var(--primary-light);
+        color: var(--neutral-dark);
+
+        label {
+            padding-left: 2rem;
+            letter-spacing: 0.5rem;
+            scale: 1.1;
+            font-weight: bolder;
+        }
+
+    }
+
+    input {
+        visibility: hidden;
+    }
+}
+
+.map-control__investigation--suspects-label-name {
+  
+    display: flex;
+    flex-grow: 1;
 }
 
 .map-control__investigation--suspects-label {
-    border-bottom: solid 1px var(--primary);
+   
     color: var(--primary-light);
     transform: skewY(5deg);
-
-
+    font-size: x-large;
 }
 
 .map-control__investigation--suspects div {
@@ -441,23 +494,32 @@ body {
     color: var(--neutral-light);
     display: flex;
     justify-content: space-between;
-    border-bottom: solid 1px var(--neutral-faint);
-    transform: skewY(5deg);
-
+    border-bottom: dotted 1px var(--neutral-faint);
+    
+    transition: all 0.2s;
 }
 
-.map-control__investigation--suspects div:hover {
-    background-color: var(--primary);
+.map-control__investigation--suspects div:hover:not(:has(:checked)) {
+    background: rgb(255,255,255);
+background: linear-gradient(54deg, rgba(255,255,255,0.1528944341408438) 0%, rgba(52,52,52,0) 78%);
+padding-left: 1rem;
+
+
+
+    scale: 1.05;
+    
+    
 }
 
 
 input[type="checkbox"] {
     accent-color: var(--primary);
+    scale: 2;
 
 }
 
-button:hover:not(:disabled) {
-    background-color: var(--neutral-faint);
+button {
+    transition: all 0.2s;
 }
 
 
@@ -470,14 +532,24 @@ button:hover:not(:disabled) {
     border-color: var(--neutral-faint);
 }
 
+
+
 .map-control__investigation--suspects-button {
 
     font-family: var(--font-family);
-    font-size: .7rem;
-    padding: .2rem;
+    font-size: 1.2rem;
+    text-align: start;
+   
     background: none;
     color: var(--secondary);
     border: none;
+
+    &:hover {
+        background: rgb(255,255,255);
+        background: radial-gradient(circle, rgba(255,255,255,0.10527538652179624) 0%, rgba(52,52,52,0) 49%);
+        letter-spacing: 0.1rem;
+    }
+    
 }
 
 .mood-img {
