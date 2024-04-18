@@ -62,7 +62,9 @@ video {
 body {
 
     font-family: 'Press Start 2P', cursive;
-  
+    
+    height: 100vh;
+    
     color: var(--neutral-light);
     
    
@@ -74,8 +76,11 @@ body {
 .gameWrapper {
     display: flex;
     flex-direction: column;
+    
     position: relative;
-    height: 100vh;
+    height: 100%;
+    
+    
     
     
 }
@@ -255,6 +260,11 @@ body {
     
 }
 
+.map-control__people-inside--mobile {
+    display: none;
+   
+}
+
 .map-control__people-inside--names li {
     font-size: .8rem;
     color: var(--neutral-light);
@@ -276,7 +286,9 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    width: 30rem;
+    max-width: 25rem;
+    min-width: 20rem;
+    width: 50vh;
     height: auto;
     aspect-ratio: 16/9;
     opacity: 80%;
@@ -285,7 +297,7 @@ body {
     button:hover:not(:disabled) {
         background: rgb(255,255,255);
     background: radial-gradient(circle, rgba(255,255,255,0.10527538652179624) 0%, rgba(52,52,52,0) 49%);
-    letter-spacing: 0.1rem;
+    letter-spacing: 0.01rem;
     }
     
 }
@@ -377,9 +389,7 @@ body {
     grid-row: 2;
 }
 
-.map-control__investigation {
-    display: flex;
-    gap: 3rem;
+.map-control__investigation--wrapper {
   
     background-color: var(--neutral-dark-grey);
     box-shadow: inset 0 15px 50px -40px var(--neutral-light),
@@ -389,6 +399,14 @@ body {
     padding: 1rem 2rem 0 ;
     flex: 1;
 
+}
+
+.map-control__investigation--content {
+    display: flex;
+    margin: 0 auto;
+    max-width: 100rem;
+    gap: 3rem;
+        
 }
 
 .map-control__investigation--case-details {
@@ -557,3 +575,93 @@ button {
     margin-right: .5rem;
 
 }
+
+@media only screen and (max-width: 600px) {
+    .map-control__investigation--suspects-label {
+        font-size:0.9rem;
+    }
+
+    .map-control__investigation--suspects-label-name {
+  
+        font-size: 0.7rem;
+    }
+
+    .map-control__investigation--case-details-label {
+        
+        font-size: 0.9rem;
+    
+    }
+
+    
+    .map-control__investigation--case-details-list li {
+        font-size: 0.7rem;
+        
+
+    }
+    .map-control__investigation--content {
+        
+        gap: 0.5rem;
+            
+    }
+
+    .map-control__investigation--suspects-button {
+        font-size: 0.8rem;
+    }
+
+    .map-control__people-inside {
+        display: none;
+    }
+
+    .map-control__people-inside--mobile {
+        text-align: center;
+        color: var(--neutral-faint);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .map-control__directional-pad {
+
+        max-width: 20rem;
+        min-width: 15rem;
+        
+        
+        aspect-ratio: 16/9;
+        
+        
+    
+        button:hover:not(:disabled) {
+        letter-spacing: 0;
+        }
+        
+    }
+
+    .map-control {
+
+        
+        margin: 0;
+        
+        flex: 1;
+    
+    }
+
+    .map-control__investigation--wrapper {
+        flex: 2;
+    
+    }
+
+    .gameWrapper::before {
+      
+        transform: rotate(150deg) translateY(50%);
+        
+    
+    }
+    
+    .gameWrapper::after {
+       
+        transform: rotate(-150deg) translateY(50%);
+       
+    
+    }
+
+  }

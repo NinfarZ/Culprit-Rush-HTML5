@@ -10,7 +10,7 @@ import { textQueue } from "./uiData.js";
 
 
 let playerLocationDisplay = document.querySelector("#location");
-const whosThere = document.querySelector(".map-control__people-inside--names");
+const whosThere = document.querySelectorAll(".map-control__people-inside--names");
 //const itemsInside = document.querySelector(".items-inside-names");
 const mapScreen = document.querySelector(".map-control__directional-pad--location");
 const mapContainer = document.querySelector(".map-control__directional-pad");
@@ -53,7 +53,10 @@ export let map = {
                     li.append(span);
                 }
 
-                whosThere.append(li);
+                for(const element of whosThere) {
+                    element.append(li);
+                }
+                
             }
 
         }
